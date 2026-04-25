@@ -21,22 +21,22 @@ Ten dokument opisuje osobny plan dla panelu administracyjnego frontendowego. Cel
 - [x] dodac TypeScript
 - [x] skonfigurowac podstawowy build
 - [x] dodac podstawowy linting
-- [ ] usunac starterowy widok Vite
-- [ ] ustalic docelowa strukture katalogow frontendu
-- [ ] przygotowac konfiguracje polaczenia z API
-- [ ] przygotowac wspolne typy i modele DTO
+- [x] usunac starterowy widok Vite
+- [x] ustalic docelowa strukture katalogow frontendu
+- [x] przygotowac konfiguracje polaczenia z API
+- [x] przygotowac wspolne typy i modele DTO
 
 ---
 
 ## Etap 2 - shell aplikacji
 
-- [ ] dodac routing aplikacji
-- [ ] przygotowac glowny layout panelu administracyjnego
-- [ ] dodac sidebar lub nawigacje glowna
-- [ ] dodac topbar z informacja o sesji
-- [ ] dodac widok `not found`
-- [ ] dodac podstawowy system powiadomien
-- [ ] przygotowac wspolne komponenty UI
+- [x] dodac routing aplikacji
+- [x] przygotowac glowny layout panelu administracyjnego
+- [x] dodac sidebar lub nawigacje glowna
+- [x] dodac topbar z informacja o sesji
+- [x] dodac widok `not found`
+- [x] dodac podstawowy system powiadomien
+- [x] przygotowac wspolne komponenty UI
 
 ---
 

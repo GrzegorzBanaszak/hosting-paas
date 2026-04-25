@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dashboard - hosting-paas Control Plane</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;family=Space+Grotesk:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#fdeade",
+                        "surface-dim": "#e9d7cb",
+                        "tertiary-container": "#007abd",
+                        "secondary-fixed": "#d5e3fc",
+                        "surface-container-highest": "#f2dfd3",
+                        "on-tertiary-fixed-variant": "#004a75",
+                        "inverse-primary": "#ffb77d",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#ffdcc3",
+                        "tertiary-fixed": "#cee5ff",
+                        "on-tertiary-fixed": "#001d32",
+                        "background": "#fff8f5",
+                        "surface-container-low": "#fff1e9",
+                        "primary-fixed-dim": "#ffb77d",
+                        "on-primary-container": "#fffbff",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#f7e5d9",
+                        "outline-variant": "#dbc2b0",
+                        "primary": "#8d4b00",
+                        "primary-container": "#b15f00",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "on-secondary": "#ffffff",
+                        "tertiary": "#006096",
+                        "on-surface-variant": "#554336",
+                        "on-background": "#231a13",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#fff8f5",
+                        "surface-bright": "#fff8f5",
+                        "on-surface": "#231a13",
+                        "tertiary-fixed-dim": "#96ccff",
+                        "on-secondary-container": "#57657a",
+                        "on-tertiary-container": "#fdfcff",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#f2dfd3",
+                        "secondary": "#515f74",
+                        "outline": "#887364",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed": "#2f1500",
+                        "on-primary-fixed-variant": "#6e3900",
+                        "surface-tint": "#904d00",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-container": "#d5e3fc",
+                        "inverse-surface": "#392e26",
+                        "inverse-on-surface": "#ffede3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "container-margin": "32px",
+                        "sm": "8px",
+                        "xl": "48px",
+                        "unit": "4px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "body-sm": [
+                            "Inter"
+                        ],
+                        "mono-label": [
+                            "Space Grotesk"
+                        ],
+                        "display-lg": [
+                            "Inter"
+                        ],
+                        "h2": [
+                            "Inter"
+                        ],
+                        "h1": [
+                            "Inter"
+                        ],
+                        "body-xs": [
+                            "Inter"
+                        ]
+                    },
+                    "fontSize": {
+                        "body-sm": [
+                            "14px",
+                            {
+                                "lineHeight": "1.5",
+                                "fontWeight": "400"
+                            }
+                        ],
+                        "mono-label": [
+                            "12px",
+                            {
+                                "lineHeight": "1",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "500"
+                            }
+                        ],
+                        "display-lg": [
+                            "36px",
+                            {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "700"
+                            }
+                        ],
+                        "h2": [
+                            "20px",
+                            {
+                                "lineHeight": "1.4",
+                                "fontWeight": "600"
+                            }
+                        ],
+                        "h1": [
+                            "24px",
+                            {
+                                "lineHeight": "1.3",
+                                "fontWeight": "600"
+                            }
+                        ],
+                        "body-xs": [
+                            "13px",
+                            {
+                                "lineHeight": "1.5",
+                                "fontWeight": "400"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #F9F7F2; /* Design System Level 0 Background */
+        }
+    </style>
+</head>
+<body class="text-on-background font-body-sm h-screen flex overflow-hidden">
+<!-- SideNavBar Component -->
+<nav class="fixed left-0 top-0 h-screen w-64 border-r border-slate-200 dark:border-slate-800 bg-[#F9F7F2] dark:bg-slate-950 flex flex-col justify-between py-6 px-4 z-50">
+<div>
+<div class="mb-8 px-4">
+<div class="flex items-center gap-3">
+<img alt="hosting-paas logo" class="w-8 h-8 rounded-lg shadow-sm" data-alt="Abstract geometric technical logo design with warm amber and deep slate tones, minimalist vector graphic style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6s7xn8TyzdBrOYBe3-AWIqvYkUNJHYFT-X-EAjuOhh3IKG3xbSHcCVSSnp555dUXFaNx1BK8sW_rSZ741P3mxeEvPh-g_ULZTcMCsq4-wd3nU0JlCTkGqEt8MiCJsZwJVESBpRbU15_8xveSp3qKObseD6jc-EH6C0HntDhlvgo9iNltvWCv0MNAT2kE0u6bDLXlLvLu8fAK4LyLiXpFgeWHKnTWa9Vm-TTv0AKF5_gCPtTZq4MbtZalx6nvMgwxiCKtQehIKo9Y"/>
+<div>
+<h1 class="text-lg font-black tracking-tighter text-slate-900 dark:text-white uppercase">hosting-paas</h1>
+<p class="font-mono-label text-mono-label text-on-surface-variant">Control Plane</p>
+</div>
+</div>
+</div>
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg font-['Inter'] antialiased tracking-tight text-sm font-medium bg-white dark:bg-slate-900 text-[#D97706] dark:text-amber-500 border border-slate-200 dark:border-slate-800 shadow-sm active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+                        Dashboard
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg font-['Inter'] antialiased tracking-tight text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">apps</span>
+                        Apps
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg font-['Inter'] antialiased tracking-tight text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">rocket_launch</span>
+                        Deployments
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg font-['Inter'] antialiased tracking-tight text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">source</span>
+                        Repos
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg font-['Inter'] antialiased tracking-tight text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">variables</span>
+                        Env Vars
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg font-['Inter'] antialiased tracking-tight text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">domain</span>
+                        Domains
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg font-['Inter'] antialiased tracking-tight text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">memory</span>
+                        Runtime
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg font-['Inter'] antialiased tracking-tight text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+                        Settings
+                    </a>
+</li>
+</ul>
+</div>
+<div>
+<ul class="space-y-1 border-t border-slate-200 dark:border-slate-800 pt-4">
+<li>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg font-['Inter'] antialiased tracking-tight text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">sensors</span>
+                        API Status
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg font-['Inter'] antialiased tracking-tight text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">description</span>
+                        Docs
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg font-['Inter'] antialiased tracking-tight text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+                        Logout
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="ml-64 flex-1 flex flex-col min-h-screen overflow-hidden">
+<!-- TopAppBar Component -->
+<header class="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm dark:shadow-none flex items-center justify-between h-16 px-8 gap-4">
+<div class="flex-1 flex items-center gap-4">
+<!-- Search Bar (on_left) -->
+<div class="relative w-64 group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-amber-500">search</span>
+<input class="w-full bg-[#F9F7F2] border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-shadow shadow-[inset_0_1px_2px_rgba(0,0,0,0.05)] placeholder-slate-400 text-slate-700" placeholder="Search resources..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E2E8F0] text-[#1A1A1A] font-mono-label text-mono-label border border-[#E2E8F0]">
+<span class="w-2 h-2 rounded-full bg-slate-500"></span>
+                        Production
+                    </span>
+<span class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-800 font-mono-label text-mono-label border border-emerald-200">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        API: Healthy
+                    </span>
+</div>
+<div class="h-6 w-px bg-slate-200 mx-2"></div>
+<div class="flex items-center gap-2 text-slate-500">
+<button class="p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-800 transition-colors active:scale-[0.98]">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-800 transition-colors active:scale-[0.98]">
+<span class="material-symbols-outlined text-[20px]">terminal</span>
+</button>
+</div>
+<button class="w-8 h-8 rounded-full overflow-hidden border border-slate-200 shadow-sm active:scale-[0.98]">
+<img alt="Admin Profile" class="w-full h-full object-cover" data-alt="Professional headshot of a person, well-lit, neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNiehuX8UXzXPvsGiAtf1lUFhw4mteVZDZLBv0ESfG_-kSNErIi3Ds8q6Bmi2ncpo2oZ3VLfSOnq-r-IHjhwczAx_UAaSVx0hsbriyAWc4JoVST7DvHDpDyni7IYJ6xh5bFrm-88Lwakih-L9oYrLG-NRelEdw6JUDWZwTapra6M0ukAsslwPkJauFx6MwxP73Gkxq9ofduXQWqVKjXCXocDDA41OU4QaplRdrLR9dBKihxB0QMgMP3rBImHrnG5tupNMFXJ9CQyE"/>
+</button>
+</div>
+</header>
+<!-- Scrollable Content Area -->
+<main class="flex-1 overflow-y-auto p-8">
+<div class="max-w-[1600px] mx-auto">
+<!-- Page Header -->
+<div class="flex items-center justify-between mb-xl">
+<div>
+<div class="flex items-center gap-2 text-sm text-slate-500 mb-2">
+<span>Control Plane</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-slate-800 font-medium">System Overview</span>
+</div>
+<h2 class="font-h1 text-h1 text-slate-900 tracking-tight">Dashboard</h2>
+</div>
+<button class="bg-[#D97706] hover:bg-[#b15f00] text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 shadow-sm transition-colors active:scale-[0.98]">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                        Deploy New App
+                    </button>
+</div>
+<!-- Top Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg mb-xl">
+<!-- Stat Card 1 -->
+<div class="bg-white rounded-xl border border-[#E2E8F0] p-md shadow-[0_2px_4px_rgba(0,0,0,0.02)] hover:border-slate-300 transition-colors">
+<div class="flex items-start justify-between mb-4">
+<h3 class="font-mono-label text-mono-label text-slate-500 uppercase">Total Apps</h3>
+<span class="material-symbols-outlined text-slate-400">apps</span>
+</div>
+<div class="flex items-end gap-3">
+<span class="font-display-lg text-display-lg text-slate-900">24</span>
+<span class="text-sm text-emerald-600 font-medium flex items-center mb-1">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+                                +2
+                            </span>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="bg-white rounded-xl border border-[#E2E8F0] p-md shadow-[0_2px_4px_rgba(0,0,0,0.02)] hover:border-slate-300 transition-colors">
+<div class="flex items-start justify-between mb-4">
+<h3 class="font-mono-label text-mono-label text-slate-500 uppercase">Active Deployments</h3>
+<span class="material-symbols-outlined text-amber-500">rocket_launch</span>
+</div>
+<div class="flex items-end gap-3">
+<span class="font-display-lg text-display-lg text-slate-900">3</span>
+</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="bg-white rounded-xl border border-[#E2E8F0] p-md shadow-[0_2px_4px_rgba(0,0,0,0.02)] hover:border-slate-300 transition-colors">
+<div class="flex items-start justify-between mb-4">
+<h3 class="font-mono-label text-mono-label text-slate-500 uppercase">API Latency</h3>
+<span class="material-symbols-outlined text-slate-400">speed</span>
+</div>
+<div class="flex items-end gap-3">
+<span class="font-display-lg text-display-lg text-slate-900">42<span class="text-lg text-slate-500 ml-1">ms</span></span>
+<span class="text-sm text-slate-500 font-medium flex items-center mb-1">
+                                p95
+                            </span>
+</div>
+</div>
+<!-- Stat Card 4 -->
+<div class="bg-white rounded-xl border border-[#E2E8F0] p-md shadow-[0_2px_4px_rgba(0,0,0,0.02)] hover:border-slate-300 transition-colors">
+<div class="flex items-start justify-between mb-4">
+<h3 class="font-mono-label text-mono-label text-slate-500 uppercase">System Health</h3>
+<span class="material-symbols-outlined text-emerald-500">monitor_heart</span>
+</div>
+<div class="flex items-end gap-3">
+<span class="font-display-lg text-display-lg text-slate-900">99.9<span class="text-lg text-slate-500 ml-1">%</span></span>
+</div>
+</div>
+</div>
+<!-- Main Layout Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Left Column (Wider) -->
+<div class="lg:col-span-8 flex flex-col gap-lg">
+<!-- Active Deployments -->
+<div class="bg-white rounded-xl border border-[#E2E8F0] shadow-[0_2px_4px_rgba(0,0,0,0.02)] overflow-hidden flex flex-col">
+<div class="p-md border-b border-[#E2E8F0] flex justify-between items-center bg-[#FBF9F6]">
+<h3 class="font-h2 text-h2 text-slate-900">Active Deployments</h3>
+<button class="text-sm text-[#D97706] font-medium hover:underline">View All</button>
+</div>
+<div class="p-0">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-[#E2E8F0] bg-white">
+<th class="font-mono-label text-mono-label text-slate-500 uppercase py-3 px-md font-medium">App / Commit</th>
+<th class="font-mono-label text-mono-label text-slate-500 uppercase py-3 px-md font-medium">Branch</th>
+<th class="font-mono-label text-mono-label text-slate-500 uppercase py-3 px-md font-medium">Status</th>
+<th class="font-mono-label text-mono-label text-slate-500 uppercase py-3 px-md font-medium text-right">Time</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+<td class="py-3 px-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs">API</div>
+<div>
+<div class="font-medium text-slate-900">payment-service</div>
+<div class="text-xs text-slate-500 font-mono">#a1b2c3d</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-md">
+<span class="inline-flex items-center gap-1 text-xs font-mono bg-slate-100 text-slate-700 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[14px]">call_split</span> main
+                                                </span>
+</td>
+<td class="py-3 px-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium border border-blue-200">
+<span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+                                                    Building
+                                                </span>
+</td>
+<td class="py-3 px-md text-right text-sm text-slate-500">2m ago</td>
+</tr>
+<tr class="bg-[#FBF9F6] border-b border-slate-100 hover:bg-slate-50 transition-colors">
+<td class="py-3 px-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">WEB</div>
+<div>
+<div class="font-medium text-slate-900">dashboard-ui</div>
+<div class="text-xs text-slate-500 font-mono">#e4f5g6h</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-md">
+<span class="inline-flex items-center gap-1 text-xs font-mono bg-slate-100 text-slate-700 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[14px]">call_split</span> staging
+                                                </span>
+</td>
+<td class="py-3 px-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-200">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                                                    Success
+                                                </span>
+</td>
+<td class="py-3 px-md text-right text-sm text-slate-500">15m ago</td>
+</tr>
+<tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+<td class="py-3 px-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs">WRK</div>
+<div>
+<div class="font-medium text-slate-900">data-processor</div>
+<div class="text-xs text-slate-500 font-mono">#j7k8l9m</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-md">
+<span class="inline-flex items-center gap-1 text-xs font-mono bg-slate-100 text-slate-700 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[14px]">call_split</span> main
+                                                </span>
+</td>
+<td class="py-3 px-md">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-200">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                                                    Success
+                                                </span>
+</td>
+<td class="py-3 px-md text-right text-sm text-slate-500">1h ago</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Platform Health -->
+<div class="bg-white rounded-xl border border-[#E2E8F0] shadow-[0_2px_4px_rgba(0,0,0,0.02)] overflow-hidden flex flex-col">
+<div class="p-md border-b border-[#E2E8F0] bg-[#FBF9F6]">
+<h3 class="font-h2 text-h2 text-slate-900">Platform Health</h3>
+</div>
+<div class="p-md grid grid-cols-1 md:grid-cols-3 gap-md">
+<!-- Region Panel 1 -->
+<div class="border border-[#E2E8F0] rounded-lg p-sm bg-[#F9F7F2]">
+<div class="flex justify-between items-center mb-2">
+<span class="font-medium text-sm text-slate-800">us-east-1</span>
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-xs">
+<span class="text-slate-500">CPU</span>
+<span class="text-slate-700 font-mono">42%</span>
+</div>
+<div class="w-full bg-slate-200 rounded-full h-1.5">
+<div class="bg-emerald-500 h-1.5 rounded-full" style="width: 42%"></div>
+</div>
+</div>
+</div>
+<!-- Region Panel 2 -->
+<div class="border border-[#E2E8F0] rounded-lg p-sm bg-[#F9F7F2]">
+<div class="flex justify-between items-center mb-2">
+<span class="font-medium text-sm text-slate-800">eu-west-1</span>
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-xs">
+<span class="text-slate-500">CPU</span>
+<span class="text-slate-700 font-mono">68%</span>
+</div>
+<div class="w-full bg-slate-200 rounded-full h-1.5">
+<div class="bg-amber-500 h-1.5 rounded-full" style="width: 68%"></div>
+</div>
+</div>
+</div>
+<!-- Region Panel 3 -->
+<div class="border border-[#E2E8F0] rounded-lg p-sm bg-[#F9F7F2]">
+<div class="flex justify-between items-center mb-2">
+<span class="font-medium text-sm text-slate-800">ap-south-1</span>
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-xs">
+<span class="text-slate-500">CPU</span>
+<span class="text-slate-700 font-mono">21%</span>
+</div>
+<div class="w-full bg-slate-200 rounded-full h-1.5">
+<div class="bg-emerald-500 h-1.5 rounded-full" style="width: 21%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column (Narrower) -->
+<div class="lg:col-span-4 flex flex-col gap-lg">
+<!-- Alerts & Incidents -->
+<div class="bg-white rounded-xl border border-[#E2E8F0] shadow-[0_2px_4px_rgba(0,0,0,0.02)] overflow-hidden">
+<div class="p-md border-b border-[#E2E8F0] bg-[#FBF9F6] flex justify-between items-center">
+<h3 class="font-h2 text-h2 text-slate-900">Alerts</h3>
+<span class="bg-red-100 text-red-700 text-xs font-bold px-2 py-0.5 rounded-full">1</span>
+</div>
+<div class="p-md space-y-3">
+<div class="flex gap-3 p-3 rounded-lg border border-red-200 bg-red-50">
+<span class="material-symbols-outlined text-red-500 shrink-0">error</span>
+<div>
+<h4 class="text-sm font-medium text-red-900">Database Connection High Latency</h4>
+<p class="text-xs text-red-700 mt-1">Primary DB cluster showing &gt;500ms latency spikes in us-east-1.</p>
+</div>
+</div>
+<div class="flex gap-3 p-3 rounded-lg border border-amber-200 bg-amber-50">
+<span class="material-symbols-outlined text-amber-500 shrink-0">warning</span>
+<div>
+<h4 class="text-sm font-medium text-amber-900">Memory Usage Warning</h4>
+<p class="text-xs text-amber-700 mt-1">Worker node pool 'data-crunchers' at 85% capacity.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Activity -->
+<div class="bg-white rounded-xl border border-[#E2E8F0] shadow-[0_2px_4px_rgba(0,0,0,0.02)] overflow-hidden flex-1">
+<div class="p-md border-b border-[#E2E8F0] bg-[#FBF9F6]">
+<h3 class="font-h2 text-h2 text-slate-900">Activity Log</h3>
+</div>
+<div class="p-md">
+<div class="relative border-l border-slate-200 ml-3 space-y-6">
+<div class="relative pl-6">
+<div class="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-[#D97706] border-2 border-white"></div>
+<p class="text-sm text-slate-800"><span class="font-medium">User admin</span> deployed <span class="font-mono text-xs bg-slate-100 px-1 rounded">payment-service</span></p>
+<p class="text-xs text-slate-500 mt-0.5">2 mins ago</p>
+</div>
+<div class="relative pl-6">
+<div class="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white"></div>
+<p class="text-sm text-slate-800">Repo sync successful for <span class="font-mono text-xs bg-slate-100 px-1 rounded">dashboard-ui</span></p>
+<p class="text-xs text-slate-500 mt-0.5">15 mins ago</p>
+</div>
+<div class="relative pl-6">
+<div class="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-slate-400 border-2 border-white"></div>
+<p class="text-sm text-slate-800">Environment variables updated by <span class="font-medium">User jane.doe</span></p>
+<p class="text-xs text-slate-500 mt-0.5">1 hour ago</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Actions -->
+<div class="bg-white rounded-xl border border-[#E2E8F0] shadow-[0_2px_4px_rgba(0,0,0,0.02)] overflow-hidden">
+<div class="p-md border-b border-[#E2E8F0] bg-[#FBF9F6]">
+<h3 class="font-h2 text-h2 text-slate-900">Quick Actions</h3>
+</div>
+<div class="p-2 flex flex-col gap-1">
+<button class="flex items-center gap-3 w-full p-2 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-md transition-colors">
+<span class="material-symbols-outlined text-slate-400">description</span>
+                                    View Documentation
+                                </button>
+<button class="flex items-center gap-3 w-full p-2 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-md transition-colors">
+<span class="material-symbols-outlined text-slate-400">list_alt</span>
+                                    Check System Logs
+                                </button>
+<button class="flex items-center gap-3 w-full p-2 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-md transition-colors">
+<span class="material-symbols-outlined text-slate-400">terminal</span>
+                                    Open Global Terminal
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
