@@ -20,4 +20,11 @@ public sealed class SystemController(IOptions<PlatformOptions> platformOptions) 
             options.EnvironmentName,
             "ok"));
     }
+
+    [HttpGet("ready")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public ActionResult<object> Ready()
+    {
+        return Ok(new { status = "ready" });
+    }
 }

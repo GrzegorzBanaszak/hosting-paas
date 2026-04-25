@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: hosting-paas-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: hosting_paas
+      POSTGRES_USER: hosting_paas
+      POSTGRES_PASSWORD: hosting_paas
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hosting_paas -d hosting_paas"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

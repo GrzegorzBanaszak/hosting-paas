@@ -2,6 +2,7 @@ using Api.Configuration;
 using Api.Extensions;
 using Api.Infrastructure.ErrorHandling;
 using Api.Infrastructure.Logging;
+using Api.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +30,8 @@ builder.Services.AddApiModules();
 
 var app = builder.Build();
 
+await app.Services.InitializeDatabaseAsync();
+
 app.UseExceptionHandler();
 app.UseStatusCodePages(async statusCodeContext =>
 {
@@ -46,6 +49,7 @@ app.UseStatusCodePages(async statusCodeContext =>
     });
 });
 app.UseMiddleware<RequestLoggingMiddleware>();
+app.UseRateLimiter();
 
 if (app.Environment.IsDevelopment())
 {
@@ -53,6 +57,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 app.MapHealthChecks("/health");

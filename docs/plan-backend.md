@@ -30,64 +30,64 @@ Ten dokument opisuje osobny plan dla API backendowego. Celem jest zbudowanie pro
 
 ## Etap 2 - model domeny
 
-- [ ] zaprojektowac encje `App`
-- [ ] zaprojektowac encje `Repository`
-- [ ] zaprojektowac encje `Deployment`
-- [ ] zaprojektowac encje `EnvironmentVariable`
-- [ ] zaprojektowac encje `Domain`
-- [ ] zaprojektowac encje `LogEntry`
-- [ ] dodac statusy dla aplikacji i deploymentu
-- [ ] ustalic relacje miedzy encjami
-- [ ] przygotowac walidacje danych
+- [x] zaprojektowac encje `App`
+- [x] zaprojektowac encje `Repository`
+- [x] zaprojektowac encje `Deployment`
+- [x] zaprojektowac encje `EnvironmentVariable`
+- [x] zaprojektowac encje `Domain`
+- [x] zaprojektowac encje `LogEntry`
+- [x] dodac statusy dla aplikacji i deploymentu
+- [x] ustalic relacje miedzy encjami
+- [x] przygotowac walidacje danych
 
 ---
 
 ## Etap 3 - baza danych
 
-- [ ] wybrac silnik bazy danych
-- [ ] przygotowac DbContext
-- [ ] dodac migracje poczatkowe
-- [ ] utworzyc tabele dla aplikacji i deploymentow
-- [ ] utworzyc tabele dla repozytoriow i domen
-- [ ] utworzyc tabele dla zmiennych srodowiskowych
-- [ ] utworzyc tabele dla logow
-- [ ] dodac seed danych dla pierwszej konfiguracji
+- [x] wybrac silnik bazy danych
+- [x] przygotowac DbContext
+- [x] dodac migracje poczatkowe
+- [x] utworzyc tabele dla aplikacji i deploymentow
+- [x] utworzyc tabele dla repozytoriow i domen
+- [x] utworzyc tabele dla zmiennych srodowiskowych
+- [x] utworzyc tabele dla logow
+- [x] dodac seed danych dla pierwszej konfiguracji
 
 ---
 
 ## Etap 4 - autoryzacja i dostep
 
-- [ ] dodac logowanie administratora
-- [ ] wybrac mechanizm autoryzacji: JWT albo cookie session
-- [ ] dodac role uzytkownikow
-- [ ] zabezpieczyc endpointy administracyjne
-- [ ] dodac podstawowe rate limiting
-- [ ] dodac walidacje tokenow lub sesji
+- [x] dodac logowanie administratora
+- [x] wybrac mechanizm autoryzacji: JWT albo cookie session
+- [x] dodac role uzytkownikow
+- [x] zabezpieczyc endpointy administracyjne
+- [x] dodac podstawowe rate limiting
+- [x] dodac walidacje tokenow lub sesji
 
 ---
 
 ## Etap 5 - zarzadzanie aplikacjami
 
-- [ ] dodac endpoint tworzenia aplikacji
-- [ ] dodac endpoint edycji aplikacji
-- [ ] dodac endpoint listy aplikacji
-- [ ] dodac endpoint szczegolow aplikacji
-- [ ] dodac endpoint usuwania aplikacji
-- [ ] dodac statusy aplikacji
-- [ ] dodac konfiguracje portu, komendy startowej i builda
-- [ ] dodac mapowanie aplikacji do subdomeny
+- [x] dodac endpoint tworzenia aplikacji
+- [x] dodac endpoint edycji aplikacji
+- [x] dodac endpoint listy aplikacji
+- [x] dodac endpoint szczegolow aplikacji
+- [x] dodac endpoint usuwania aplikacji
+- [x] dodac statusy aplikacji
+- [x] dodac konfiguracje portu, komendy startowej i builda
+- [x] dodac mapowanie aplikacji do subdomeny
 
 ---
 
 ## Etap 6 - integracja z GitHub
 
-- [ ] dodac podpiecie repozytorium do aplikacji
-- [ ] dodac wybor brancha deployujacego
-- [ ] dodac obsluge webhooka z GitHuba
-- [ ] zweryfikowac podpis webhooka
-- [ ] dodac zapis commit SHA dla deploya
-- [ ] dodac obsluge rerun deploya dla konkretnego commita
-- [ ] dodac filtracje eventow po repozytorium i branchu
+- [x] dodac podpiecie repozytorium do aplikacji
+- [x] dodac wybor brancha deployujacego
+- [x] dodac obsluge webhooka z GitHuba
+- [x] zweryfikowac podpis webhooka
+- [x] dodac zapis commit SHA dla deploya
+- [x] dodac obsluge rerun deploya dla konkretnego commita
+- [x] dodac filtracje eventow po repozytorium i branchu
 
 ---
 
