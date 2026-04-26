@@ -1,6 +1,8 @@
 using Api.Configuration;
 using Api.Infrastructure.Auth;
+using Api.Infrastructure.Deployments;
 using Api.Infrastructure.Persistence;
+using Api.Infrastructure.Runtime;
 using System.Text;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -26,8 +28,26 @@ public static class ServiceCollectionExtensions
             .ValidateOnStart();
 
         services
+            .AddOptions<CorsOptions>()
+            .Bind(configuration.GetSection(CorsOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services
             .AddOptions<AuthOptions>()
             .Bind(configuration.GetSection(AuthOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services
+            .AddOptions<DeploymentPipelineOptions>()
+            .Bind(configuration.GetSection(DeploymentPipelineOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services
+            .AddOptions<RuntimeOptions>()
+            .Bind(configuration.GetSection(RuntimeOptions.SectionName))
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
@@ -43,6 +63,25 @@ public static class ServiceCollectionExtensions
             options.UseNpgsql(connectionString));
 
         services.AddScoped<IAdminAuthService, AdminAuthService>();
+        services.AddSingleton<IDeploymentQueue, DeploymentQueue>();
+        services.AddSingleton<DeploymentCommandRunner>();
+        services.AddHttpClient(nameof(AppRuntimeService));
+        services.AddSingleton<IAppRuntimeService, AppRuntimeService>();
+        services.AddHostedService<DeploymentPipelineWorker>();
+        services.AddHostedService<AppRuntimeMonitor>();
+        var corsOptions = configuration.GetSection(CorsOptions.SectionName).Get<CorsOptions>()
+            ?? throw new InvalidOperationException($"Section '{CorsOptions.SectionName}' is not configured.");
+
+        services.AddCors(options =>
+        {
+            options.AddPolicy("frontend", policy =>
+            {
+                policy
+                    .WithOrigins(corsOptions.AllowedOrigins)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>

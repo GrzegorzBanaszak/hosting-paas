@@ -6,6 +6,8 @@ export type AppRoute = {
   label: string
   description: string
   icon: string
+  public?: boolean
+  nav?: boolean
   section?: 'primary' | 'secondary'
   element: ReactNode
 }
@@ -17,9 +19,79 @@ type RouterContextValue = {
 
 const RouterContext = createContext<RouterContextValue | null>(null)
 
+export type RouteMatch = {
+  route: AppRoute
+  params: Record<string, string>
+}
+
 function getCurrentPath() {
   const path = window.location.pathname || '/'
   return path === '' ? '/' : path
+}
+
+function normalizePath(path: string) {
+  if (path === '') {
+    return '/'
+  }
+
+  if (path.length > 1 && path.endsWith('/')) {
+    return path.slice(0, -1)
+  }
+
+  return path
+}
+
+function getPathSegments(path: string) {
+  const normalized = normalizePath(path)
+
+  if (normalized === '/') {
+    return []
+  }
+
+  return normalized.slice(1).split('/')
+}
+
+export function matchPath(pattern: string, pathname: string) {
+  const patternSegments = getPathSegments(pattern)
+  const pathSegments = getPathSegments(pathname)
+
+  if (patternSegments.length !== pathSegments.length) {
+    return null
+  }
+
+  const params: Record<string, string> = {}
+
+  for (let index = 0; index < patternSegments.length; index += 1) {
+    const patternSegment = patternSegments[index]
+    const pathSegment = pathSegments[index]
+
+    if (!patternSegment || !pathSegment) {
+      return null
+    }
+
+    if (patternSegment.startsWith(':')) {
+      params[patternSegment.slice(1)] = decodeURIComponent(pathSegment)
+      continue
+    }
+
+    if (patternSegment !== pathSegment) {
+      return null
+    }
+  }
+
+  return params
+}
+
+export function matchRoute(routes: AppRoute[], pathname: string): RouteMatch | null {
+  for (const route of routes) {
+    const params = matchPath(route.path, pathname)
+
+    if (params) {
+      return { route, params }
+    }
+  }
+
+  return null
 }
 
 export function RouterProvider({
@@ -101,7 +173,7 @@ export function RouterLink({
 
 export function RouterView({ routes }: { routes: AppRoute[] }) {
   const { currentPath } = useRouter()
-  const route = routes.find((item) => item.path === currentPath)
+  const match = matchRoute(routes, currentPath)
 
-  return route ? route.element : <NotFoundPage />
+  return match ? match.route.element : <NotFoundPage />
 }

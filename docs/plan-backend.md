@@ -93,26 +93,26 @@ Ten dokument opisuje osobny plan dla API backendowego. Celem jest zbudowanie pro
 
 ## Etap 7 - pipeline deployu
 
-- [ ] dodac tworzenie rekordu deploymentu
-- [ ] dodac kolejke zadan deployu
-- [ ] dodac etap build
-- [ ] dodac etap publikacji obrazu lub artefaktu
-- [ ] dodac etap restartu uslugi
-- [ ] dodac statusy pipeline
-- [ ] dodac obsluge bledow i retry
-- [ ] dodac historię deploymentow
+- [x] dodac tworzenie rekordu deploymentu
+- [x] dodac kolejke zadan deployu
+- [x] dodac etap build
+- [x] dodac etap publikacji obrazu lub artefaktu
+- [x] dodac etap restartu uslugi
+- [x] dodac statusy pipeline
+- [x] dodac obsluge bledow i retry
+- [x] dodac historię deploymentow
 
 ---
 
 ## Etap 8 - runtime i operacje
 
-- [ ] dodac restart aplikacji
-- [ ] dodac start aplikacji
-- [ ] dodac stop aplikacji
-- [ ] dodac healthcheck aplikacji
-- [ ] dodac podglad ostatnich logow
-- [ ] dodac pobieranie logow po zakresie czasu
-- [ ] dodac prosty monitoring statusu kontenera
+- [x] dodac restart aplikacji
+- [x] dodac start aplikacji
+- [x] dodac stop aplikacji
+- [x] dodac healthcheck aplikacji
+- [x] dodac podglad ostatnich logow
+- [x] dodac pobieranie logow po zakresie czasu
+- [x] dodac prosty monitoring statusu kontenera
 
 ---
 

@@ -13,7 +13,10 @@ namespace Api.Controllers;
 [ApiController]
 [Route("api/webhooks/github")]
 [AllowAnonymous]
-public sealed class GitHubWebhooksController(AppDbContext dbContext, ILogger<GitHubWebhooksController> logger) : ControllerBase
+public sealed class GitHubWebhooksController(
+    AppDbContext dbContext,
+    IDeploymentQueue deploymentQueue,
+    ILogger<GitHubWebhooksController> logger) : ControllerBase
 {
     [HttpPost]
     [Consumes("application/json")]
@@ -116,10 +119,11 @@ public sealed class GitHubWebhooksController(AppDbContext dbContext, ILogger<Git
         dbContext.LogEntries.Add(DeploymentFactory.CreateLog(
             matchingRepository.App,
             deployment,
-            "github-webhook",
+            DeploymentLogSources.Queue,
             $"Queued deployment from GitHub push on branch '{branch}' for commit '{commitSha ?? "unknown"}'."));
 
         await dbContext.SaveChangesAsync(cancellationToken);
+        await deploymentQueue.QueueAsync(deployment.Id, cancellationToken);
 
         logger.LogInformation(
             "Queued deployment {DeploymentId} from GitHub push for app {AppId} ({Owner}/{Repository}) on branch {Branch}.",

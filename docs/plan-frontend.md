@@ -42,46 +42,46 @@ Ten dokument opisuje osobny plan dla panelu administracyjnego frontendowego. Cel
 
 ## Etap 3 - autoryzacja i sesja
 
-- [ ] dodac formularz logowania administratora
-- [ ] podpiac `POST /api/auth/login`
-- [ ] przechowywac token dostepowy
-- [ ] dodac bootstrap sesji przez `GET /api/auth/me`
-- [ ] zabezpieczyc trasy wymagajace zalogowania
-- [ ] dodac wylogowanie
-- [ ] dodac obsluge wygasniecia tokenu
+- [x] dodac formularz logowania administratora
+- [x] podpiac `POST /api/auth/login`
+- [x] przechowywac token dostepowy
+- [x] dodac bootstrap sesji przez `GET /api/auth/me`
+- [x] zabezpieczyc trasy wymagajace zalogowania
+- [x] dodac wylogowanie
+- [x] dodac obsluge wygasniecia tokenu
 
 ---
 
 ## Etap 4 - dashboard platformy
 
-- [ ] dodac ekran startowy panelu
-- [ ] pokazac status API i healthcheck
-- [ ] pokazac podstawowe informacje o platformie
-- [ ] dodac sekcje ostatniej aktywnosci
-- [ ] dodac miejsce na metryki aplikacji i deploymentow
-- [ ] dodac stany puste dla jeszcze niegotowych modulow
+- [x] dodac ekran startowy panelu
+- [x] pokazac status API i healthcheck
+- [x] pokazac podstawowe informacje o platformie
+- [x] dodac sekcje ostatniej aktywnosci
+- [x] dodac miejsce na metryki aplikacji i deploymentow
+- [x] dodac stany puste dla jeszcze niegotowych modulow
 
 ---
 
 ## Etap 5 - zarzadzanie aplikacjami
 
-- [ ] dodac widok listy aplikacji
-- [ ] dodac filtrowanie i wyszukiwanie aplikacji
-- [ ] dodac widok szczegolow aplikacji
-- [ ] dodac formularz tworzenia aplikacji
-- [ ] dodac formularz edycji aplikacji
-- [ ] dodac akcje usuniecia aplikacji
-- [ ] pokazac status aplikacji i podstawowe metadane
+- [x] dodac widok listy aplikacji
+- [x] dodac filtrowanie i wyszukiwanie aplikacji
+- [x] dodac widok szczegolow aplikacji
+- [x] dodac formularz tworzenia aplikacji
+- [x] dodac formularz edycji aplikacji
+- [x] dodac akcje usuniecia aplikacji
+- [x] pokazac status aplikacji i podstawowe metadane
 
 ---
 
 ## Etap 6 - repozytorium i integracja GitHub
 
-- [ ] dodac sekcje podpiecia repozytorium do aplikacji
-- [ ] dodac formularz owner / repo / branch / clone url
-- [ ] pokazac aktualnie podlaczone repozytorium
-- [ ] dodac widok konfiguracji webhooka
-- [ ] pokazac ostatni commit i branch deployujacy
+- [x] dodac sekcje podpiecia repozytorium do aplikacji
+- [x] dodac formularz owner / repo / branch / clone url
+- [x] pokazac aktualnie podlaczone repozytorium
+- [x] dodac widok konfiguracji webhooka
+- [x] pokazac ostatni commit i branch deployujacy
 
 ---
 

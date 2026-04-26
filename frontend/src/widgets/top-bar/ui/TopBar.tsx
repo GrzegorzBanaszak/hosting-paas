@@ -1,9 +1,22 @@
 import type { AppRoute } from '../../../app/router'
+import type { AuthSession } from '../../../features/auth/model/types'
+import { useApiHealth } from '../../../shared/api/useApiHealth'
 import { Badge } from '../../../shared/ui/Badge'
+import { Button } from '../../../shared/ui/Button'
 import { useToast } from '../../toaster/ui/ToastContext'
 
-export function TopBar({ currentRoute }: { currentRoute?: AppRoute }) {
+export function TopBar({
+  currentRoute,
+  session,
+  onLogout,
+}: {
+  currentRoute?: AppRoute
+  session: AuthSession | null
+  onLogout: () => void
+}) {
   const { pushToast } = useToast()
+  const apiHealth = useApiHealth()
+  const displayName = session?.user.displayName ?? session?.user.username ?? 'Admin'
 
   return (
     <header className="sticky top-0 z-20 border-b border-[color:var(--hp-border)] bg-white/85 px-5 py-5 backdrop-blur-sm lg:px-10">
@@ -22,7 +35,9 @@ export function TopBar({ currentRoute }: { currentRoute?: AppRoute }) {
 
         <div className="flex flex-wrap items-center gap-3 xl:justify-end">
           <Badge tone="default">Production</Badge>
-          <Badge tone="success">API: Healthy</Badge>
+          <Badge tone={apiHealth === 'healthy' ? 'success' : apiHealth === 'checking' ? 'warning' : 'danger'}>
+            API: {apiHealth === 'healthy' ? 'Healthy' : apiHealth === 'checking' ? 'Checking' : 'Offline'}
+          </Badge>
           <div className="hidden h-8 w-px bg-[color:var(--hp-border)] lg:block" />
           <button
             type="button"
@@ -45,11 +60,15 @@ export function TopBar({ currentRoute }: { currentRoute?: AppRoute }) {
           >
             <span className="material-symbols-outlined">terminal</span>
           </button>
+          <Button kind="secondary" className="px-3 py-2" onClick={onLogout}>
+            <span className="material-symbols-outlined mr-2 text-[18px]">logout</span>
+            Logout
+          </Button>
           <div
             className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-[color:var(--hp-border)] bg-[color:var(--hp-text)] text-sm font-semibold text-white shadow-[var(--hp-shadow)]"
-            title={currentRoute?.label ?? 'Admin'}
+            title={currentRoute?.label ?? displayName}
           >
-            AD
+            {displayName.slice(0, 2).toUpperCase()}
           </div>
         </div>
       </div>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#ffffff",
+                    "surface-container-high": "#f7e5d9",
+                    "secondary-fixed-dim": "#b9c7df",
+                    "on-surface": "#231a13",
+                    "primary-fixed": "#ffdcc3",
+                    "surface-tint": "#904d00",
+                    "primary": "#8d4b00",
+                    "error": "#ba1a1a",
+                    "on-tertiary-container": "#fdfcff",
+                    "primary-fixed-dim": "#ffb77d",
+                    "tertiary-container": "#007abd",
+                    "inverse-on-surface": "#ffede3",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#cee5ff",
+                    "on-tertiary-fixed-variant": "#004a75",
+                    "outline": "#887364",
+                    "inverse-primary": "#ffb77d",
+                    "secondary-fixed": "#d5e3fc",
+                    "surface-container-highest": "#f2dfd3",
+                    "on-surface-variant": "#554336",
+                    "background": "#fff8f5",
+                    "secondary": "#515f74",
+                    "on-secondary-fixed": "#0d1c2e",
+                    "surface-bright": "#fff8f5",
+                    "on-primary-fixed": "#2f1500",
+                    "tertiary-fixed-dim": "#96ccff",
+                    "outline-variant": "#dbc2b0",
+                    "surface-dim": "#e9d7cb",
+                    "error-container": "#ffdad6",
+                    "secondary-container": "#d5e3fc",
+                    "surface-variant": "#f2dfd3",
+                    "on-secondary-fixed-variant": "#3a485b",
+                    "on-background": "#231a13",
+                    "surface-container": "#fdeade",
+                    "on-error-container": "#93000a",
+                    "tertiary": "#006096",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-container": "#57657a",
+                    "inverse-surface": "#392e26",
+                    "on-primary-container": "#fffbff",
+                    "on-tertiary-fixed": "#001d32",
+                    "surface-container-low": "#fff1e9",
+                    "primary-container": "#b15f00",
+                    "surface": "#fff8f5",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed-variant": "#6e3900"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "sm": "8px",
+                    "md": "16px",
+                    "lg": "24px",
+                    "xs": "4px",
+                    "xl": "48px",
+                    "unit": "4px",
+                    "gutter": "16px",
+                    "container-margin": "32px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "mono-label": ["Space Grotesk"],
+                    "h1": ["Inter"],
+                    "h2": ["Inter"],
+                    "body-xs": ["Inter"]
+            },
+            "fontSize": {
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "display-lg": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "mono-label": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "h1": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "h2": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "body-xs": ["13px", {"lineHeight": "1.5", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            width: 1em;
+            height: 1em;
+        }
+        body { background-color: #fff8f5; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="font-body-sm text-on-surface">
+<!-- Top Navigation Bar -->
+<header class="flex justify-between items-center w-full px-6 h-14 sticky top-0 bg-stone-50/80 backdrop-blur-md border-b border-stone-200 z-40 shadow-sm">
+<div class="flex items-center gap-4">
+<span class="text-lg font-bold tracking-tighter text-stone-900">Infra Cockpit</span>
+<div class="h-4 w-px bg-stone-200"></div>
+<span class="font-mono-label text-body-xs text-stone-500 uppercase">Environment: Production</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group">
+<span class="material-symbols-outlined text-stone-500 cursor-pointer hover:bg-stone-100 p-1.5 rounded-lg transition-colors">sensors</span>
+</div>
+<div class="relative group">
+<span class="material-symbols-outlined text-stone-500 cursor-pointer hover:bg-stone-100 p-1.5 rounded-lg transition-colors">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full border-2 border-white"></span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border border-stone-200">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpQCJ3HB6iVNt-vvIc8V8FcV4SmU_qjT_oMNHfNEpU0lquybJ95_yWpviMyRwvYMm7ER9ALe-Bl01SyThAYyyBiUOiF3Wcmb9bzl_swkeLdVdDIa36ywchl7hoeLvBHLm8IPP0Vkj5a977X2GwDcg4kXPH99RlqYo_u3-3DbDzFkOqo_9U5MF-rRsbKjd-rKLgz0M5s6SNX09or4xyV_n1DFGsY03SCgiqGFHIVfiUkInUy0ojv7R1J2Y-NQylFVPODxQOVhIOdLI"/>
+</div>
+</div>
+</header>
+<!-- Side Navigation Bar -->
+<nav class="fixed h-screen w-64 border-r border-stone-200 left-0 top-0 z-50 bg-stone-50 flex flex-col py-4 gap-1 hidden md:flex">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">memory</span>
+</div>
+<div>
+<div class="text-amber-600 font-black font-mono-label text-sm">HostManager v2</div>
+<div class="text-[10px] text-stone-400 font-bold uppercase tracking-widest">Cloud Infrastructure</div>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto no-scrollbar px-3 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-stone-500 hover:bg-stone-100/50 rounded-lg transition-all font-mono-label uppercase text-[11px] tracking-wider" href="#">
+<span class="material-symbols-outlined text-lg">dashboard</span> Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 bg-white text-amber-600 border-r-4 border-amber-600 shadow-sm rounded-lg transition-all font-mono-label uppercase text-[11px] tracking-wider" href="#">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">apps</span> Apps
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-stone-500 hover:bg-stone-100/50 rounded-lg transition-all font-mono-label uppercase text-[11px] tracking-wider" href="#">
+<span class="material-symbols-outlined text-lg">rocket_launch</span> Deployments
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-stone-500 hover:bg-stone-100/50 rounded-lg transition-all font-mono-label uppercase text-[11px] tracking-wider" href="#">
+<span class="material-symbols-outlined text-lg">source</span> Repos
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-stone-500 hover:bg-stone-100/50 rounded-lg transition-all font-mono-label uppercase text-[11px] tracking-wider" href="#">
+<span class="material-symbols-outlined text-lg">variables</span> Env Vars
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-stone-500 hover:bg-stone-100/50 rounded-lg transition-all font-mono-label uppercase text-[11px] tracking-wider" href="#">
+<span class="material-symbols-outlined text-lg">language</span> Domains
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-stone-500 hover:bg-stone-100/50 rounded-lg transition-all font-mono-label uppercase text-[11px] tracking-wider" href="#">
+<span class="material-symbols-outlined text-lg">memory</span> Runtime
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-stone-500 hover:bg-stone-100/50 rounded-lg transition-all font-mono-label uppercase text-[11px] tracking-wider" href="#">
+<span class="material-symbols-outlined text-lg">settings</span> Settings
+            </a>
+</div>
+<div class="px-3 mt-auto pt-4 border-t border-stone-200">
+<a class="flex items-center gap-3 px-3 py-2 text-stone-500 hover:bg-stone-100/50 rounded-lg transition-all font-mono-label uppercase text-[11px] tracking-wider" href="#">
+<span class="material-symbols-outlined text-lg">help</span> Support
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-stone-500 hover:bg-stone-100/50 rounded-lg transition-all font-mono-label uppercase text-[11px] tracking-wider" href="#">
+<span class="material-symbols-outlined text-lg">description</span> Documentation
+            </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="md:pl-64 min-h-screen pb-24">
+<!-- Sticky Action Bar -->
+<div class="sticky top-14 z-30 bg-surface-container-low/95 backdrop-blur-sm border-b border-outline-variant px-lg py-sm flex justify-between items-center">
+<div class="flex items-center gap-md">
+<h1 class="font-h1 text-h1 text-on-surface">Edit: auth-service-v2</h1>
+<span class="bg-primary-fixed text-on-primary-fixed px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-widest">Active</span>
+</div>
+<div class="flex items-center gap-sm">
+<button class="bg-white border border-outline-variant text-on-surface px-lg py-sm rounded font-body-sm font-semibold hover:bg-stone-50 transition-colors">Cancel</button>
+<button class="bg-primary text-on-primary px-lg py-sm rounded font-body-sm font-semibold shadow-sm hover:opacity-90 active:scale-[0.98] transition-all">Save Changes</button>
+</div>
+</div>
+<div class="max-w-[1200px] mx-auto p-lg space-y-lg">
+<!-- Basic Information -->
+<section class="bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+<div class="px-lg py-md border-b border-outline-variant bg-stone-50/50 flex items-center justify-between">
+<h2 class="font-h2 text-h2 text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">info</span>
+                        Basic Info
+                    </h2>
+</div>
+<div class="p-lg grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="space-y-xs">
+<label class="font-mono-label text-mono-label text-on-surface-variant block uppercase">Application Name</label>
+<input class="w-full bg-background border-outline-variant rounded p-sm text-body-sm focus:ring-1 focus:ring-primary outline-none transition-shadow inset-shadow-sm" type="text" value="auth-service-v2"/>
+</div>
+<div class="space-y-xs">
+<label class="font-mono-label text-mono-label text-on-surface-variant block uppercase">URL Slug</label>
+<div class="flex">
+<span class="bg-surface-container flex items-center px-sm border border-r-0 border-outline-variant text-stone-500 text-body-xs rounded-l">infra-cockpit.io/</span>
+<input class="flex-1 bg-background border-outline-variant rounded-r p-sm text-body-sm focus:ring-1 focus:ring-primary outline-none transition-shadow" type="text" value="auth-v2"/>
+</div>
+</div>
+<div class="md:col-span-2 space-y-xs">
+<label class="font-mono-label text-mono-label text-on-surface-variant block uppercase">Description</label>
+<textarea class="w-full bg-background border-outline-variant rounded p-sm text-body-sm focus:ring-1 focus:ring-primary outline-none transition-shadow" rows="3">Production authentication and authorization service for core infrastructure. Managed OAuth2 and JWT validation.</textarea>
+</div>
+</div>
+</section>
+<!-- Repository Settings -->
+<section class="bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+<div class="px-lg py-md border-b border-outline-variant bg-stone-50/50">
+<h2 class="font-h2 text-h2 text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">source</span>
+                        Repo Settings
+                    </h2>
+</div>
+<div class="p-lg grid grid-cols-1 md:grid-cols-3 gap-lg">
+<div class="md:col-span-2 space-y-xs">
+<label class="font-mono-label text-mono-label text-on-surface-variant block uppercase">Repository URL</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-400">link</span>
+<input class="w-full bg-background border-outline-variant rounded py-sm pl-10 pr-sm text-body-sm focus:ring-1 focus:ring-primary outline-none transition-shadow" type="text" value="github.com/infra-cockpit/auth-service"/>
+</div>
+</div>
+<div class="space-y-xs">
+<label class="font-mono-label text-mono-label text-on-surface-variant block uppercase">Deployment Branch</label>
+<select class="w-full bg-background border-outline-variant rounded p-sm text-body-sm focus:ring-1 focus:ring-primary outline-none transition-shadow appearance-none cursor-pointer">
+<option selected="">main</option>
+<option>staging</option>
+<option>develop</option>
+</select>
+</div>
+</div>
+</section>
+<!-- Runtime Config -->
+<section class="bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+<div class="px-lg py-md border-b border-outline-variant bg-stone-50/50">
+<h2 class="font-h2 text-h2 text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">memory</span>
+                        Runtime Config
+                    </h2>
+</div>
+<div class="p-lg grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="space-y-xs">
+<label class="font-mono-label text-mono-label text-on-surface-variant block uppercase">Runtime</label>
+<div class="grid grid-cols-3 gap-sm">
+<button class="border border-primary bg-primary-fixed/30 text-primary py-sm px-2 rounded flex flex-col items-center gap-1">
+<span class="material-symbols-outlined">javascript</span>
+<span class="text-[10px] font-bold">Node.js</span>
+</button>
+<button class="border border-outline-variant hover:border-primary py-sm px-2 rounded flex flex-col items-center gap-1 transition-colors">
+<span class="material-symbols-outlined">terminal</span>
+<span class="text-[10px] font-bold">Python</span>
+</button>
+<button class="border border-outline-variant hover:border-primary py-sm px-2 rounded flex flex-col items-center gap-1 transition-colors">
+<span class="material-symbols-outlined">data_object</span>
+<span class="text-[10px] font-bold">Go</span>
+</button>
+</div>
+</div>
+<div class="space-y-xs">
+<label class="font-mono-label text-mono-label text-on-surface-variant block uppercase">Listen Port</label>
+<input class="w-full bg-background border-outline-variant rounded p-sm text-body-sm focus:ring-1 focus:ring-primary outline-none transition-shadow" type="number" value="3000"/>
+</div>
+<div class="space-y-xs">
+<label class="font-mono-label text-mono-label text-on-surface-variant block uppercase">Build Command</label>
+<input class="w-full bg-background font-mono text-body-xs border-outline-variant rounded p-sm focus:ring-1 focus:ring-primary outline-none transition-shadow" placeholder="e.g. npm install &amp;&amp; npm run build" type="text" value="npm run build"/>
+</div>
+<div class="space-y-xs">
+<label class="font-mono-label text-mono-label text-on-surface-variant block uppercase">Start Command</label>
+<input class="w-full bg-background font-mono text-body-xs border-outline-variant rounded p-sm focus:ring-1 focus:ring-primary outline-none transition-shadow" placeholder="e.g. node index.js" type="text" value="npm start"/>
+</div>
+</div>
+</section>
+<!-- Env Vars -->
+<section class="bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+<div class="px-lg py-md border-b border-outline-variant bg-stone-50/50 flex justify-between items-center">
+<h2 class="font-h2 text-h2 text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">variables</span>
+                        Environment Variables
+                    </h2>
+<button class="text-primary text-body-xs font-bold uppercase tracking-wider flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-sm">add</span> Add Variable
+                    </button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full border-collapse">
+<thead>
+<tr class="bg-stone-50/50 border-b border-outline-variant">
+<th class="text-left px-lg py-sm font-mono-label text-[10px] uppercase text-stone-500 w-1/3">Key</th>
+<th class="text-left px-lg py-sm font-mono-label text-[10px] uppercase text-stone-500">Value</th>
+<th class="w-16"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<tr class="hover:bg-stone-50/30">
+<td class="px-lg py-md">
+<input class="w-full bg-transparent border-none p-0 font-mono text-body-xs focus:ring-0" type="text" value="DATABASE_URL"/>
+</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-2">
+<input class="flex-1 bg-transparent border-none p-0 font-mono text-body-xs focus:ring-0" type="password" value="postgres://admin:••••••••@db.cluster.local:5432/auth"/>
+<span class="material-symbols-outlined text-stone-400 text-sm cursor-pointer hover:text-primary transition-colors">visibility</span>
+</div>
+</td>
+<td class="px-lg py-md text-right">
+<span class="material-symbols-outlined text-stone-400 text-lg cursor-pointer hover:text-error transition-colors">delete</span>
+</td>
+</tr>
+<tr class="bg-[#FBF9F6] hover:bg-stone-50/30">
+<td class="px-lg py-md">
+<input class="w-full bg-transparent border-none p-0 font-mono text-body-xs focus:ring-0" type="text" value="JWT_SECRET"/>
+</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-2">
+<input class="flex-1 bg-transparent border-none p-0 font-mono text-body-xs focus:ring-0" type="password" value="x-session-key-v2-stable-0912"/>
+<span class="material-symbols-outlined text-stone-400 text-sm cursor-pointer hover:text-primary transition-colors">visibility</span>
+</div>
+</td>
+<td class="px-lg py-md text-right">
+<span class="material-symbols-outlined text-stone-400 text-lg cursor-pointer hover:text-error transition-colors">delete</span>
+</td>
+</tr>
+<tr class="hover:bg-stone-50/30">
+<td class="px-lg py-md">
+<input class="w-full bg-transparent border-none p-0 font-mono text-body-xs focus:ring-0" type="text" value="NODE_ENV"/>
+</td>
+<td class="px-lg py-md">
+<input class="w-full bg-transparent border-none p-0 font-mono text-body-xs focus:ring-0" type="text" value="production"/>
+</td>
+<td class="px-lg py-md text-right">
+<span class="material-symbols-outlined text-stone-400 text-lg cursor-pointer hover:text-error transition-colors">delete</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</main>
+<!-- Mobile Bottom Navigation (Visible only on mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-outline-variant flex justify-around items-center z-50">
+<button class="flex flex-col items-center gap-1 text-stone-500">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-mono-label uppercase">Dashboard</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">apps</span>
+<span class="text-[10px] font-mono-label uppercase">Apps</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-stone-500">
+<span class="material-symbols-outlined">rocket_launch</span>
+<span class="text-[10px] font-mono-label uppercase">Deploy</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-stone-500">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-mono-label uppercase">Settings</span>
+</button>
+</nav>
+</body></html>

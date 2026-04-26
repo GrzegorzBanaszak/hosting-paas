@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#f7e5d9",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-surface": "#231a13",
+                        "primary-fixed": "#ffdcc3",
+                        "surface-tint": "#904d00",
+                        "primary": "#8d4b00",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#fdfcff",
+                        "primary-fixed-dim": "#ffb77d",
+                        "tertiary-container": "#007abd",
+                        "inverse-on-surface": "#ffede3",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#cee5ff",
+                        "on-tertiary-fixed-variant": "#004a75",
+                        "outline": "#887364",
+                        "inverse-primary": "#ffb77d",
+                        "secondary-fixed": "#d5e3fc",
+                        "surface-container-highest": "#f2dfd3",
+                        "on-surface-variant": "#554336",
+                        "background": "#fff8f5",
+                        "secondary": "#515f74",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "surface-bright": "#fff8f5",
+                        "on-primary-fixed": "#2f1500",
+                        "tertiary-fixed-dim": "#96ccff",
+                        "outline-variant": "#dbc2b0",
+                        "surface-dim": "#e9d7cb",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#d5e3fc",
+                        "surface-variant": "#f2dfd3",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "on-background": "#231a13",
+                        "surface-container": "#fdeade",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#006096",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-container": "#57657a",
+                        "inverse-surface": "#392e26",
+                        "on-primary-container": "#fffbff",
+                        "on-tertiary-fixed": "#001d32",
+                        "surface-container-low": "#fff1e9",
+                        "primary-container": "#b15f00",
+                        "surface": "#fff8f5",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#6e3900"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "xl": "48px",
+                        "unit": "4px",
+                        "gutter": "16px",
+                        "container-margin": "32px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "mono-label": ["Space Grotesk"],
+                        "h1": ["Inter"],
+                        "h2": ["Inter"],
+                        "body-xs": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "display-lg": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "mono-label": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "h1": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "h2": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "body-xs": ["13px", {"lineHeight": "1.5", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+            font-size: 1.25rem;
+        }
+        body {
+            background-color: #fff8f5;
+        }
+    </style>
+</head>
+<body class="font-body-sm text-on-surface">
+<!-- SideNavBar -->
+<aside class="fixed h-screen w-64 border-r left-0 top-0 z-50 bg-stone-50 dark:bg-stone-950 border-stone-200 dark:border-stone-800 flex flex-col h-full py-4 gap-1">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" data-icon="memory">memory</span>
+</div>
+<div>
+<h1 class="text-amber-600 font-black font-mono-label tracking-tighter">HostManager v2</h1>
+<p class="text-[10px] text-stone-500 uppercase tracking-widest font-semibold">Cloud Infrastructure</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-6 py-3 gap-3 text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 hover:bg-stone-100/50 dark:hover:bg-stone-900/50 transition-all font-sans text-xs font-semibold uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-3 bg-white dark:bg-stone-900 text-amber-600 dark:text-amber-500 border-r-4 border-amber-600 shadow-sm font-sans text-xs font-semibold uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="apps">apps</span>
+<span>Apps</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-3 text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 hover:bg-stone-100/50 dark:hover:bg-stone-900/50 transition-all font-sans text-xs font-semibold uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="rocket_launch">rocket_launch</span>
+<span>Deployments</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-3 text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 hover:bg-stone-100/50 dark:hover:bg-stone-900/50 transition-all font-sans text-xs font-semibold uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="source">source</span>
+<span>Repos</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-3 text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 hover:bg-stone-100/50 dark:hover:bg-stone-900/50 transition-all font-sans text-xs font-semibold uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="variable">variables</span>
+<span>Env Vars</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-3 text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 hover:bg-stone-100/50 dark:hover:bg-stone-900/50 transition-all font-sans text-xs font-semibold uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="language">language</span>
+<span>Domains</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-3 text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 hover:bg-stone-100/50 dark:hover:bg-stone-900/50 transition-all font-sans text-xs font-semibold uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-6 py-4 border-t border-stone-200 dark:border-stone-800">
+<button class="w-full py-2 bg-primary text-on-primary font-mono-label text-xs tracking-widest uppercase flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                Create New App
+            </button>
+<div class="mt-4 space-y-2">
+<a class="flex items-center gap-3 text-stone-500 text-[10px] uppercase font-bold tracking-widest hover:text-amber-600 transition-colors" href="#">
+<span class="material-symbols-outlined text-xs" data-icon="help">help</span> Support
+                </a>
+<a class="flex items-center gap-3 text-stone-500 text-[10px] uppercase font-bold tracking-widest hover:text-amber-600 transition-colors" href="#">
+<span class="material-symbols-outlined text-xs" data-icon="description">description</span> Documentation
+                </a>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="ml-64 min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-stone-50/80 dark:bg-stone-950/80 backdrop-blur-md flex justify-between items-center w-full px-6 h-14 sticky top-0 border-b border-stone-200 dark:border-stone-800 z-40 shadow-sm">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" data-icon="search">search</span>
+<input class="w-full bg-stone-100/50 border-none pl-10 pr-4 py-1.5 text-body-xs font-sans rounded focus:ring-1 focus:ring-primary/20" placeholder="Search infrastructure..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="font-mono-label text-[10px] text-stone-500 uppercase tracking-widest">Environment: Production</span>
+<div class="flex items-center gap-3">
+<button class="p-2 text-stone-500 hover:bg-stone-100 rounded transition-colors"><span class="material-symbols-outlined" data-icon="sensors">sensors</span></button>
+<button class="p-2 text-stone-500 hover:bg-stone-100 rounded transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-stone-50"></span>
+</button>
+<div class="w-8 h-8 rounded-full bg-stone-200 overflow-hidden border border-stone-300">
+<img class="w-full h-full object-cover" data-alt="Close-up professional portrait of a tech lead in a minimal office setting with neutral colors and soft architectural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlBW-yy_A1x-NAr-HQFRW6J4F9jYweMi5JPggI8S5g__0lVPTCGns07mtJV_KkmtTZoEDdtHLJ6o-XRFCWGfEoceaetBrKreALE5E2NY2sBLLkmzwDhrGPemPVJJcppbefG93WTztyjv9ANXB7s9rnMkUr6ux04OEB1UEGLo8uVKrBPNL83ytEghjYX8FpEVG-RHyS4XTSik7ofN3pEK3nCaxyo-rjXKosxruPX3Qsr29UeVMublBxm4unoirqoFsXca37Bpv0XnE"/>
+</div>
+</div>
+</div>
+</header>
+<div class="p-8 max-w-[1600px] mx-auto">
+<!-- Header Section -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="text-primary font-mono-label text-xs uppercase tracking-widest">Infrastructure /</span>
+</div>
+<h2 class="font-display-lg text-on-surface">Apps</h2>
+<p class="font-body-sm text-on-surface-variant mt-1">Manage and monitor your running application services.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 border border-outline-variant text-on-surface font-mono-label text-xs uppercase tracking-widest hover:bg-stone-100 transition-colors">
+                        Export Config
+                    </button>
+<button class="px-6 py-2 bg-primary text-on-primary font-mono-label text-xs uppercase tracking-widest shadow-sm hover:opacity-90 transition-opacity flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                        New App
+                    </button>
+</div>
+</div>
+<!-- Dashboard Pods (Metric Overviews) -->
+<div class="grid grid-cols-4 gap-6 mb-8">
+<div class="bg-white border border-stone-200 p-4 shadow-[0px_2px_4px_rgba(0,0,0,0.02)]">
+<div class="flex justify-between items-start mb-2">
+<span class="text-stone-500 font-mono-label text-[10px] uppercase tracking-widest">Total Services</span>
+<span class="material-symbols-outlined text-stone-400 text-sm" data-icon="terminal">terminal</span>
+</div>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-bold font-display-lg">24</span>
+<span class="text-xs text-green-600 mb-1 font-mono-label">+2 this month</span>
+</div>
+</div>
+<div class="bg-white border border-stone-200 p-4 shadow-[0px_2px_4px_rgba(0,0,0,0.02)]">
+<div class="flex justify-between items-start mb-2">
+<span class="text-stone-500 font-mono-label text-[10px] uppercase tracking-widest">Global Status</span>
+<span class="material-symbols-outlined text-green-500 text-sm" data-icon="check_circle">check_circle</span>
+</div>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-bold font-display-lg">98.2%</span>
+<span class="text-xs text-stone-500 mb-1 font-mono-label">Healthy</span>
+</div>
+</div>
+<div class="bg-white border border-stone-200 p-4 shadow-[0px_2px_4px_rgba(0,0,0,0.02)]">
+<div class="flex justify-between items-start mb-2">
+<span class="text-stone-500 font-mono-label text-[10px] uppercase tracking-widest">Resource Usage</span>
+<span class="material-symbols-outlined text-stone-400 text-sm" data-icon="memory">memory</span>
+</div>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-bold font-display-lg">64%</span>
+<span class="text-xs text-amber-600 mb-1 font-mono-label">Peak utilization</span>
+</div>
+</div>
+<div class="bg-white border border-stone-200 p-4 shadow-[0px_2px_4px_rgba(0,0,0,0.02)]">
+<div class="flex justify-between items-start mb-2">
+<span class="text-stone-500 font-mono-label text-[10px] uppercase tracking-widest">Daily Requests</span>
+<span class="material-symbols-outlined text-stone-400 text-sm" data-icon="show_chart">show_chart</span>
+</div>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-bold font-display-lg">1.2M</span>
+<span class="text-xs text-green-600 mb-1 font-mono-label">↑ 12%</span>
+</div>
+</div>
+</div>
+<!-- Filters Bar -->
+<div class="bg-stone-100/50 border border-stone-200 px-4 py-3 mb-6 flex flex-wrap items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="font-mono-label text-[10px] text-stone-500 uppercase">Status:</span>
+<select class="bg-transparent border-none text-body-xs font-semibold focus:ring-0 cursor-pointer">
+<option>All Statuses</option>
+<option>Running</option>
+<option>Stopped</option>
+<option>Failed</option>
+</select>
+</div>
+<div class="h-4 w-px bg-stone-300"></div>
+<div class="flex items-center gap-2">
+<span class="font-mono-label text-[10px] text-stone-500 uppercase">Env:</span>
+<select class="bg-transparent border-none text-body-xs font-semibold focus:ring-0 cursor-pointer">
+<option>All Environments</option>
+<option>Production</option>
+<option>Staging</option>
+</select>
+</div>
+<div class="h-4 w-px bg-stone-300"></div>
+<div class="flex items-center gap-2">
+<span class="font-mono-label text-[10px] text-stone-500 uppercase">Runtime:</span>
+<select class="bg-transparent border-none text-body-xs font-semibold focus:ring-0 cursor-pointer">
+<option>All Runtimes</option>
+<option>Node.js</option>
+<option>Python</option>
+<option>Go</option>
+</select>
+</div>
+<button class="ml-auto flex items-center gap-2 text-stone-500 font-mono-label text-[10px] uppercase hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="filter_list">filter_list</span>
+                    Clear All
+                </button>
+</div>
+<!-- Apps Table -->
+<div class="bg-white border border-stone-200 overflow-hidden shadow-[0px_2px_4px_rgba(0,0,0,0.02)]">
+<table class="w-full text-left border-collapse">
+<thead class="bg-stone-50 border-b border-stone-200">
+<tr>
+<th class="px-6 py-3 font-mono-label text-[10px] uppercase tracking-widest text-stone-500">App Name / Slug</th>
+<th class="px-6 py-3 font-mono-label text-[10px] uppercase tracking-widest text-stone-500">Status</th>
+<th class="px-6 py-3 font-mono-label text-[10px] uppercase tracking-widest text-stone-500">Branch &amp; Repo</th>
+<th class="px-6 py-3 font-mono-label text-[10px] uppercase tracking-widest text-stone-500">Runtime</th>
+<th class="px-6 py-3 font-mono-label text-[10px] uppercase tracking-widest text-stone-500">Environment</th>
+<th class="px-6 py-3 font-mono-label text-[10px] uppercase tracking-widest text-stone-500">Last Updated</th>
+<th class="px-6 py-3 font-mono-label text-[10px] uppercase tracking-widest text-stone-500 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-stone-100">
+<!-- Row 1 -->
+<tr class="hover:bg-stone-50/50 transition-colors group">
+<td class="px-6 py-4">
+<div class="font-bold text-on-surface">Main Api Service</div>
+<div class="text-[11px] text-stone-400 font-mono tracking-tight">api-prod-v2-ams</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-green-50 text-green-700 border border-green-200 text-[10px] font-bold uppercase tracking-wider rounded-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                                    Running
+                                </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-body-xs font-medium">
+<span class="material-symbols-outlined text-sm text-stone-400" data-icon="account_tree">account_tree</span>
+                                    main
+                                </div>
+<div class="text-[11px] text-stone-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]" data-icon="link">link</span>
+                                    github.com/org/core-api
+                                </div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 bg-stone-100 rounded flex items-center justify-center">
+<img class="w-3 h-3 opacity-70" data-alt="Minimalist Node.js vector logo in green on a transparent background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvQbsuWrMkoDylJ11v4BiD0wsmO9PA__Oc_AKL0ZMi4_OaejpJrOZSB34UqJdKfSaQw4sfYGLENTcgf6fedyDmpQMPiXMiEV0LoeA7Z-IWF9Bsq_dIWVfIaB70P128W7WEDjgMJQrRay-CGEWio4XR0rBaJAp1FoaOzLVkaelkfWFPYfzYhzKrF6hS1Epf2_YNfGZavVHE7eQvhqFOpqmgBdyheFzsQa0MgebpOaE7OPGhIJMBeDIIFE3UVN4RPm1ONj7TPORC338"/>
+</div>
+<span class="text-body-xs font-semibold">Node.js 18.x</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="font-mono-label text-[10px] text-amber-700 bg-amber-50 px-2 py-0.5 border border-amber-200 uppercase">Production</span>
+</td>
+<td class="px-6 py-4">
+<div class="text-body-xs">2 hours ago</div>
+<div class="text-[10px] text-stone-400 uppercase font-mono-label">By: amartinez</div>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-white hover:shadow-sm border border-transparent hover:border-stone-200 transition-all rounded text-stone-600" title="View Logs"><span class="material-symbols-outlined text-sm" data-icon="visibility">visibility</span></button>
+<button class="p-2 hover:bg-white hover:shadow-sm border border-transparent hover:border-stone-200 transition-all rounded text-stone-600" title="Edit Config"><span class="material-symbols-outlined text-sm" data-icon="edit">edit</span></button>
+<button class="p-2 hover:bg-white hover:shadow-sm border border-transparent hover:border-stone-200 transition-all rounded text-amber-600" title="Redeploy"><span class="material-symbols-outlined text-sm" data-icon="refresh">refresh</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-stone-50/50 transition-colors group">
+<td class="px-6 py-4">
+<div class="font-bold text-on-surface">Data Processing Worker</div>
+<div class="text-[11px] text-stone-400 font-mono tracking-tight">worker-py-lambda</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-stone-50 text-stone-500 border border-stone-200 text-[10px] font-bold uppercase tracking-wider rounded-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-stone-400"></span>
+                                    Stopped
+                                </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-body-xs font-medium">
+<span class="material-symbols-outlined text-sm text-stone-400" data-icon="account_tree">account_tree</span>
+                                    staging
+                                </div>
+<div class="text-[11px] text-stone-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]" data-icon="link">link</span>
+                                    github.com/org/etl-jobs
+                                </div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 bg-stone-100 rounded flex items-center justify-center">
+<img class="w-3 h-3 opacity-70" data-alt="Minimalist Python vector logo in blue and yellow on a transparent background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-JBHlEd4cPArPLkgJ9YqmQ4blrr71s98gjAFDVcrG01D92WnJU83JgrDX2A8OkWEBQk4zvP2hH27r4hk9BsFVLN3expZIjoh9xFmQc-pw2uK9IQksS2l88TeNOppcnHHVrNkMjimFDNqCXopP47YCCMGaoVjLjRoInv-p5A17ZgtcsqdsV-yDUiXRC1HUuStQ6f4i9MrBDQ4IDchE7zr2VPb2oJaWcqD1Aduylf6TZOSNZ-bYficTxwFi7akf6Laq_7MfPuPUePE"/>
+</div>
+<span class="text-body-xs font-semibold">Python 3.10</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="font-mono-label text-[10px] text-stone-500 bg-stone-100 px-2 py-0.5 border border-stone-200 uppercase">Staging</span>
+</td>
+<td class="px-6 py-4">
+<div class="text-body-xs">1 day ago</div>
+<div class="text-[10px] text-stone-400 uppercase font-mono-label">By: system</div>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-white hover:shadow-sm border border-transparent hover:border-stone-200 transition-all rounded text-stone-600"><span class="material-symbols-outlined text-sm" data-icon="visibility">visibility</span></button>
+<button class="p-2 hover:bg-white hover:shadow-sm border border-transparent hover:border-stone-200 transition-all rounded text-stone-600"><span class="material-symbols-outlined text-sm" data-icon="edit">edit</span></button>
+<button class="p-2 hover:bg-white hover:shadow-sm border border-transparent hover:border-stone-200 transition-all rounded text-amber-600"><span class="material-symbols-outlined text-sm" data-icon="refresh">refresh</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-stone-50/50 transition-colors group">
+<td class="px-6 py-4">
+<div class="font-bold text-on-surface">Payment Gateway</div>
+<div class="text-[11px] text-stone-400 font-mono tracking-tight">pay-gate-legacy</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-red-50 text-red-700 border border-red-200 text-[10px] font-bold uppercase tracking-wider rounded-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                                    Failed
+                                </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-body-xs font-medium">
+<span class="material-symbols-outlined text-sm text-stone-400" data-icon="account_tree">account_tree</span>
+                                    main
+                                </div>
+<div class="text-[11px] text-stone-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]" data-icon="link">link</span>
+                                    github.com/org/payments
+                                </div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 bg-stone-100 rounded flex items-center justify-center">
+<img class="w-3 h-3 opacity-70" data-alt="Minimalist Go lang vector logo in light blue on a transparent background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAO-qGSbJnAL3ECtGdLvAP65-TdDtgCuuBCEfv6UL7VdPuTfCaU8dUllUfu28r9Y-Z-_x9QkhI7Jhkf7_nqByAGFyA7x7fYoENieKr9MxBtNKUhvXgK-2b04mw_6bVlQQ_PYfGCVdElQ-MpadHGfGGU9yrgsaGj9kRvmsEF0xzeYtuub4CmQnldkHkyvfuIVWo8M5GVvtuQaef5g62fDj72yYEdutGSo1sC8t2xFVGgK_is5p4Axh9jHrfDZZ3dbZ1XrPmdvRVGn3A"/>
+</div>
+<span class="text-body-xs font-semibold">Go 1.19</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="font-mono-label text-[10px] text-amber-700 bg-amber-50 px-2 py-0.5 border border-amber-200 uppercase">Production</span>
+</td>
+<td class="px-6 py-4">
+<div class="text-body-xs">14 mins ago</div>
+<div class="text-[10px] text-red-500 uppercase font-mono-label font-bold">Health Check Failed</div>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-white hover:shadow-sm border border-transparent hover:border-stone-200 transition-all rounded text-stone-600"><span class="material-symbols-outlined text-sm" data-icon="visibility">visibility</span></button>
+<button class="p-2 hover:bg-white hover:shadow-sm border border-transparent hover:border-stone-200 transition-all rounded text-stone-600"><span class="material-symbols-outlined text-sm" data-icon="edit">edit</span></button>
+<button class="p-2 hover:bg-white hover:shadow-sm border border-transparent hover:border-stone-200 transition-all rounded text-amber-600"><span class="material-symbols-outlined text-sm" data-icon="refresh">refresh</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-stone-50/50 transition-colors group">
+<td class="px-6 py-4">
+<div class="font-bold text-on-surface">Customer Dashboard</div>
+<div class="text-[11px] text-stone-400 font-mono tracking-tight">fe-dash-v1</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-bold uppercase tracking-wider rounded-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+                                    Pending
+                                </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-body-xs font-medium">
+<span class="material-symbols-outlined text-sm text-stone-400" data-icon="account_tree">account_tree</span>
+                                    feat/ui-overhaul
+                                </div>
+<div class="text-[11px] text-stone-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]" data-icon="link">link</span>
+                                    github.com/org/dashboard-fe
+                                </div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 bg-stone-100 rounded flex items-center justify-center">
+<img class="w-3 h-3 opacity-70" data-alt="Minimalist Node.js vector logo in green on a transparent background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaAy1lRre_Ao4Z9W5p0NhdbSNt4_aG1socRPYa_1tasurx79IWz41atMm2IWjPzCMi3XyJNHaJVSuyP7fVHIlb4ZJVWetXfvu0_5xEuuksvUbetG3qnYBMjQGNdZ8zVISAyiXn69sEcMaaqraD-YCAspep1DfigtpM1PlySqkT2IYwcmveSOzINfQWCRuQiGvB4afo5MaI82nduVH7fv7DADPOdiSZ-hSl2LDtK9JY0sR5veQf7yoxBndKaHebBc06IXpOqAvz_nM"/>
+</div>
+<span class="text-body-xs font-semibold">Node.js 20.x</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="font-mono-label text-[10px] text-stone-500 bg-stone-100 px-2 py-0.5 border border-stone-200 uppercase">Staging</span>
+</td>
+<td class="px-6 py-4">
+<div class="text-body-xs">Just now</div>
+<div class="text-[10px] text-blue-500 uppercase font-mono-label font-bold">Deploying...</div>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-white hover:shadow-sm border border-transparent hover:border-stone-200 transition-all rounded text-stone-600"><span class="material-symbols-outlined text-sm" data-icon="visibility">visibility</span></button>
+<button class="p-2 hover:bg-white hover:shadow-sm border border-transparent hover:border-stone-200 transition-all rounded text-stone-600"><span class="material-symbols-outlined text-sm" data-icon="edit">edit</span></button>
+<button class="p-2 hover:bg-white hover:shadow-sm border border-transparent hover:border-stone-200 transition-all rounded text-stone-300 cursor-not-allowed"><span class="material-symbols-outlined text-sm" data-icon="refresh">refresh</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination -->
+<div class="px-6 py-4 bg-stone-50 border-t border-stone-200 flex justify-between items-center">
+<span class="font-mono-label text-[10px] text-stone-500 uppercase">Showing 1-4 of 24 apps</span>
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center border border-stone-200 bg-white hover:bg-stone-50 transition-colors text-stone-500"><span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span></button>
+<button class="w-8 h-8 flex items-center justify-center border border-stone-200 bg-stone-100 text-primary font-bold text-xs">1</button>
+<button class="w-8 h-8 flex items-center justify-center border border-stone-200 bg-white hover:bg-stone-50 transition-colors text-stone-600 text-xs">2</button>
+<button class="w-8 h-8 flex items-center justify-center border border-stone-200 bg-white hover:bg-stone-50 transition-colors text-stone-600 text-xs">3</button>
+<button class="w-8 h-8 flex items-center justify-center border border-stone-200 bg-white hover:bg-stone-50 transition-colors text-stone-500"><span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span></button>
+</div>
+</div>
+</div>
+<!-- Contextual Help / Status Pods -->
+<div class="mt-12 grid grid-cols-2 gap-8">
+<div class="border-l-2 border-primary-container pl-6 py-2">
+<h4 class="font-mono-label text-[10px] uppercase tracking-widest text-primary mb-2">Technical Guidance</h4>
+<p class="text-body-sm text-on-surface-variant max-w-md">Running instances use isolated kernels via KVM. Ensure environment variables are synced across all production replicas before triggering a manual redeploy.</p>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex flex-col">
+<span class="text-stone-400 font-mono-label text-[9px] uppercase tracking-widest mb-1">Region Health</span>
+<div class="flex gap-1">
+<span class="w-1 h-3 bg-green-400 rounded-full"></span>
+<span class="w-1 h-3 bg-green-400 rounded-full"></span>
+<span class="w-1 h-3 bg-green-400 rounded-full"></span>
+<span class="w-1 h-3 bg-amber-400 rounded-full"></span>
+<span class="w-1 h-3 bg-green-400 rounded-full"></span>
+</div>
+</div>
+<div class="h-8 w-px bg-stone-200"></div>
+<div class="flex flex-col">
+<span class="text-stone-400 font-mono-label text-[9px] uppercase tracking-widest mb-1">API Latency</span>
+<div class="flex items-center gap-2">
+<span class="text-lg font-bold font-display-lg text-on-surface">12ms</span>
+<span class="material-symbols-outlined text-green-500 text-sm" data-icon="trending_down">trending_down</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

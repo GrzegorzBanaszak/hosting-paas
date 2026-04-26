@@ -1,9 +1,24 @@
 import { PlaceholderPage } from '../pages/foundation/ui/PlaceholderPage'
 import { NotFoundPage } from '../pages/not-found/ui/NotFoundPage'
 import { DashboardPage } from '../pages/dashboard/ui/DashboardPage'
+import { AppsPage } from '../pages/apps/ui/AppsPage'
+import { AppDetailsPage } from '../pages/apps/ui/AppDetailsPage'
+import { AppEditPage } from '../pages/apps/ui/AppEditPage'
+import { RepositoriesPage } from '../pages/repositories/ui/RepositoriesPage'
+import { RepositoryDetailsPage } from '../pages/repositories/ui/RepositoryDetailsPage'
+import { RepositoryEditPage } from '../pages/repositories/ui/RepositoryEditPage'
+import { LoginPage } from '../features/auth/ui/LoginPage'
 import type { AppRoute } from './router'
 
 export const routes: AppRoute[] = [
+  {
+    path: '/login',
+    label: 'Login',
+    description: 'Logowanie administratora do control plane.',
+    icon: 'login',
+    public: true,
+    element: <LoginPage />,
+  },
   {
     path: '/',
     label: 'Dashboard',
@@ -15,17 +30,34 @@ export const routes: AppRoute[] = [
   {
     path: '/apps',
     label: 'Apps',
-    description: 'Lista aplikacji i miejsce pod CRUD w Etapie 5.',
+    description: 'Lista aplikacji w stylu cockpit z metrykami, filtrami i tabela serwisow.',
     icon: 'apps',
     section: 'primary',
-    element: (
-      <PlaceholderPage
-        eyebrow="Etap 5"
-        title="Zarzadzanie aplikacjami"
-        description="Shell jest gotowy na liste aplikacji, filtry i widok szczegolow. Na razie to bezpieczny placeholder osadzony w docelowym layoucie."
-        highlights={['Lista aplikacji', 'Filtry i wyszukiwarka', 'Metadane i statusy']}
-      />
-    ),
+    element: <AppsPage />,
+  },
+  {
+    path: '/apps/create',
+    label: 'Create App',
+    description: 'Osobny ekran tworzenia aplikacji.',
+    icon: 'apps',
+    nav: false,
+    element: <AppEditPage />,
+  },
+  {
+    path: '/apps/:appId',
+    label: 'App Details',
+    description: 'Szczegoly aplikacji w ukladzie overview.',
+    icon: 'apps',
+    nav: false,
+    element: <AppDetailsPage />,
+  },
+  {
+    path: '/apps/:appId/edit',
+    label: 'Edit App',
+    description: 'Pelny ekran edycji aplikacji.',
+    icon: 'apps',
+    nav: false,
+    element: <AppEditPage />,
   },
   {
     path: '/deployments',
@@ -45,17 +77,34 @@ export const routes: AppRoute[] = [
   {
     path: '/repositories',
     label: 'Repos',
-    description: 'Konfiguracja repozytoriow i webhookow.',
+    description: 'Lista repozytoriow i mapowan GitHub dla aplikacji.',
     icon: 'source',
     section: 'primary',
-    element: (
-      <PlaceholderPage
-        eyebrow="Etap 6"
-        title="Repozytoria"
-        description="Ten widok przygotowuje routing i przestrzen pod podpiecie GitHuba oraz branch deployujacy."
-        highlights={['Owner / repo / branch', 'Webhooki', 'Ostatni commit']}
-      />
-    ),
+    element: <RepositoriesPage />,
+  },
+  {
+    path: '/repositories/create',
+    label: 'Create Repository',
+    description: 'Osobny ekran dodawania repozytorium.',
+    icon: 'source',
+    nav: false,
+    element: <RepositoryEditPage />,
+  },
+  {
+    path: '/repositories/:appId',
+    label: 'Repository Details',
+    description: 'Podglad mapowania repozytorium dla wybranej aplikacji.',
+    icon: 'source',
+    nav: false,
+    element: <RepositoryDetailsPage />,
+  },
+  {
+    path: '/repositories/:appId/edit',
+    label: 'Edit Repository',
+    description: 'Pelny ekran edycji repozytorium.',
+    icon: 'source',
+    nav: false,
+    element: <RepositoryEditPage />,
   },
   {
     path: '/environment',

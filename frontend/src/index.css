@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0');
 @import "tailwindcss";
 
@@ -7,11 +7,13 @@
   font-family: 'Inter', sans-serif;
   color: #231a13;
   --hp-bg: #f9f7f2;
+  --hp-auth-bg: #fff8f5;
   --hp-surface: #ffffff;
   --hp-surface-strong: #fbf9f6;
   --hp-surface-dim: #f2dfd3;
   --hp-border: #e2e8f0;
   --hp-border-strong: #c9d4e5;
+  --hp-auth-border: #e9c8ab;
   --hp-text: #231a13;
   --hp-text-muted: #64748b;
   --hp-text-subtle: #475569;

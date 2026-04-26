@@ -1,20 +1,36 @@
 import type { AppRoute } from '../../../app/router'
+import type { AuthSession } from '../../../features/auth/model/types'
 import { RouterLink } from '../../../app/router'
 import logoUrl from '../../../assets/logo.png'
+import { Button } from '../../../shared/ui/Button'
 
 export function SideNav({
   routes,
   currentPath,
+  session,
+  onLogout,
 }: {
   routes: AppRoute[]
   currentPath: string
+  session: AuthSession | null
+  onLogout: () => void
 }) {
   const primaryRoutes = routes.filter(
-    (route) => route.section !== 'secondary' && route.path !== '/404',
+    (route) =>
+      route.nav !== false &&
+      route.section !== 'secondary' &&
+      route.path !== '/404' &&
+      !route.public,
   )
   const secondaryRoutes = routes.filter(
-    (route) => route.section === 'secondary' && route.path !== '/404',
+    (route) =>
+      route.nav !== false &&
+      route.section === 'secondary' &&
+      route.path !== '/404' &&
+      !route.public,
   )
+  const displayName = session?.user.displayName ?? session?.user.username ?? 'Administrator'
+  const email = session?.user.email ?? `${session?.user.username ?? 'admin'}@local`
 
   return (
     <aside className="hidden h-screen w-80 shrink-0 flex-col justify-between border-r border-[color:var(--hp-border)] bg-[color:var(--hp-bg)] px-5 py-6 md:flex">
@@ -41,7 +57,7 @@ export function SideNav({
               <NavItem
                 key={route.path}
                 route={route}
-                active={currentPath === route.path}
+                active={isRouteActive(route.path, currentPath)}
               />
             ))}
           </div>
@@ -49,12 +65,23 @@ export function SideNav({
       </div>
 
       <div className="border-t border-[color:var(--hp-border)] pt-6">
+        <div className="mb-5 rounded-[var(--hp-radius-md)] border border-[color:var(--hp-border)] bg-[color:var(--hp-surface)] p-4 shadow-[var(--hp-shadow)]">
+          <div className="font-['Space_Grotesk'] text-[11px] uppercase tracking-[0.14em] text-[color:var(--hp-text-muted)]">
+            Admin Session
+          </div>
+          <div className="mt-2 text-[15px] font-semibold">{displayName}</div>
+          <div className="mt-1 text-[13px] text-[color:var(--hp-text-muted)]">{email}</div>
+          <Button kind="secondary" className="mt-4 w-full justify-center" onClick={onLogout}>
+            <span className="material-symbols-outlined mr-2 text-[18px]">logout</span>
+            Logout
+          </Button>
+        </div>
         <div className="space-y-1">
           {secondaryRoutes.map((route) => (
             <NavItem
               key={route.path}
               route={route}
-              active={currentPath === route.path}
+              active={isRouteActive(route.path, currentPath)}
             />
           ))}
         </div>
@@ -77,4 +104,16 @@ function NavItem({ route, active }: { route: AppRoute; active: boolean }) {
       <span className="min-w-0 flex-1 font-medium">{route.label}</span>
     </RouterLink>
   )
+}
+
+function isRouteActive(routePath: string, currentPath: string) {
+  if (currentPath === routePath) {
+    return true
+  }
+
+  if (routePath === '/') {
+    return false
+  }
+
+  return currentPath.startsWith(`${routePath}/`)
 }

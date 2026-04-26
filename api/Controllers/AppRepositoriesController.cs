@@ -17,7 +17,7 @@ namespace Api.Controllers;
 [Route("api/apps/{appId:guid}/repository")]
 [Authorize(Policy = ApiPolicies.AdminAccess)]
 [EnableRateLimiting("admin-api")]
-public sealed class AppRepositoriesController(AppDbContext dbContext) : ControllerBase
+public sealed class AppRepositoriesController(AppDbContext dbContext, IDeploymentQueue deploymentQueue) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType<RepositoryResponse>(StatusCodes.Status200OK)]
@@ -111,6 +111,53 @@ public sealed class AppRepositoriesController(AppDbContext dbContext) : Controll
         return NoContent();
     }
 
+    [HttpGet("/api/apps/{appId:guid}/deployments")]
+    [ProducesResponseType<IReadOnlyCollection<DeploymentHistoryItemResponse>>(StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyCollection<DeploymentHistoryItemResponse>>> GetDeploymentHistory(Guid appId, CancellationToken cancellationToken)
+    {
+        var appExists = await dbContext.Apps
+            .AsNoTracking()
+            .AnyAsync(entity => entity.Id == appId, cancellationToken);
+
+        if (!appExists)
+        {
+            return NotFound();
+        }
+
+        var deployments = await dbContext.Deployments
+            .AsNoTracking()
+            .Where(item => item.AppId == appId)
+            .OrderByDescending(item => item.CreatedAtUtc)
+            .ToListAsync(cancellationToken);
+
+        var deploymentIds = deployments.Select(item => item.Id).ToArray();
+        Dictionary<Guid, string> latestLogSources;
+
+        if (deploymentIds.Length == 0)
+        {
+            latestLogSources = [];
+        }
+        else
+        {
+            var logs = await dbContext.LogEntries
+                .AsNoTracking()
+                .Where(item => item.DeploymentId.HasValue && deploymentIds.Contains(item.DeploymentId.Value))
+                .OrderByDescending(item => item.TimestampUtc)
+                .ThenByDescending(item => item.Id)
+                .ToListAsync(cancellationToken);
+
+            latestLogSources = logs
+                .GroupBy(item => item.DeploymentId!.Value)
+                .ToDictionary(group => group.Key, group => group.First().Source);
+        }
+
+        return Ok(deployments
+            .Select(deployment => MapHistoryResponse(
+                deployment,
+                latestLogSources.TryGetValue(deployment.Id, out var source) ? source : null))
+            .ToArray());
+    }
+
     [HttpPost("/api/apps/{appId:guid}/deployments/redeploy")]
     [ProducesResponseType<DeploymentQueueResponse>(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -151,10 +198,11 @@ public sealed class AppRepositoriesController(AppDbContext dbContext) : Controll
         dbContext.LogEntries.Add(DeploymentFactory.CreateLog(
             app,
             deployment,
-            "deployments",
+            DeploymentLogSources.Queue,
             $"Queued redeploy for commit '{deployment.CommitSha}' on branch '{deployment.Branch}'."));
 
         await dbContext.SaveChangesAsync(cancellationToken);
+        await deploymentQueue.QueueAsync(deployment.Id, cancellationToken);
 
         return Accepted(MapResponse(deployment));
     }
@@ -186,6 +234,24 @@ public sealed class AppRepositoriesController(AppDbContext dbContext) : Controll
             deployment.Branch,
             deployment.CommitSha,
             deployment.CreatedAtUtc);
+    }
+
+    private static DeploymentHistoryItemResponse MapHistoryResponse(Deployment deployment, string? latestLogSource)
+    {
+        return new DeploymentHistoryItemResponse(
+            deployment.Id,
+            deployment.AppId,
+            deployment.RepositoryId,
+            deployment.Status.ToString(),
+            deployment.Trigger.ToString(),
+            ResolvePipelineStage(deployment, latestLogSource).ToString(),
+            deployment.Branch,
+            deployment.CommitSha,
+            deployment.ArtifactReference,
+            deployment.FailureReason,
+            deployment.CreatedAtUtc,
+            deployment.StartedAtUtc,
+            deployment.FinishedAtUtc);
     }
 
     private void ApplyRequest(Repository repository, SaveRepositoryRequest request, RepositoryProvider provider)
@@ -262,6 +328,31 @@ public sealed class AppRepositoriesController(AppDbContext dbContext) : Controll
             Detail = detail,
             Status = StatusCodes.Status409Conflict,
             Type = "https://httpstatuses.com/409"
+        };
+    }
+
+    private static DeploymentPipelineStage ResolvePipelineStage(Deployment deployment, string? latestLogSource)
+    {
+        return deployment.Status switch
+        {
+            DeploymentStatus.Queued => DeploymentPipelineStage.Queued,
+            DeploymentStatus.Succeeded => DeploymentPipelineStage.Completed,
+            DeploymentStatus.Failed => latestLogSource switch
+            {
+                DeploymentLogSources.Restart => DeploymentPipelineStage.Restart,
+                DeploymentLogSources.Publish => DeploymentPipelineStage.Publish,
+                DeploymentLogSources.Build => DeploymentPipelineStage.Build,
+                _ => DeploymentPipelineStage.Failed
+            },
+            DeploymentStatus.Cancelled => DeploymentPipelineStage.Cancelled,
+            DeploymentStatus.Running => latestLogSource switch
+            {
+                DeploymentLogSources.Restart => DeploymentPipelineStage.Restart,
+                DeploymentLogSources.Publish => DeploymentPipelineStage.Publish,
+                DeploymentLogSources.Build => DeploymentPipelineStage.Build,
+                _ => DeploymentPipelineStage.Build
+            },
+            _ => DeploymentPipelineStage.Queued
         };
     }
 }
