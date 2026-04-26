@@ -1,6 +1,6 @@
 namespace Api.Modules.Deployments;
 
-public sealed record DeploymentHistoryItemResponse(
+public sealed record DeploymentDetailsResponse(
     Guid Id,
     Guid AppId,
     Guid? RepositoryId,

@@ -1,11 +1,7 @@
 import type { FormEvent, ReactNode } from 'react'
 import { Button } from '../../../shared/ui/Button'
 import { EmptyState } from '../../../shared/ui/EmptyState'
-import {
-  DetailPanel,
-  ListMessage,
-  formatDate,
-} from '../../apps/ui/appsShared'
+import { DetailPanel, ListMessage, formatDate } from '../../apps/ui/appsShared'
 import type {
   DeploymentHistoryItem,
   RepositoryItem,
@@ -72,8 +68,8 @@ export function RepositoryForm({
   return (
     <form id="repository-edit-form" className="space-y-8" onSubmit={onSubmit}>
       <FormSection
-        icon="source"
-        title="Repository Mapping"
+        icon="link"
+        title="App Binding"
         contentClassName="grid gap-6 md:grid-cols-2"
       >
         <Field label="Application">
@@ -86,7 +82,7 @@ export function RepositoryForm({
               <option value="">Select application</option>
               {availableApps.map((app) => (
                 <option key={app.id} value={app.id}>
-                  {app.name}
+                  {app.name} ({app.slug})
                 </option>
               ))}
             </select>
@@ -99,6 +95,21 @@ export function RepositoryForm({
           <input value="GitHub" disabled className={inputClassName} />
         </Field>
 
+        <div className="rounded-[var(--hp-radius-md)] border border-dashed border-[color:var(--hp-auth-border)] bg-[rgba(255,249,245,0.85)] px-5 py-4 md:col-span-2">
+          <div className="font-['Space_Grotesk'] text-[11px] uppercase tracking-[0.14em] text-[color:var(--hp-text-muted)]">
+            Model Rule
+          </div>
+          <p className="mt-2 text-[14px] leading-7 text-[color:var(--hp-text-subtle)]">
+            One repository mapping belongs to one app. Branch ownership should stay unique per connected app.
+          </p>
+        </div>
+      </FormSection>
+
+      <FormSection
+        icon="source"
+        title="Repository Mapping"
+        contentClassName="grid gap-6 md:grid-cols-2"
+      >
         <Field label="Owner">
           <input
             required
@@ -109,7 +120,7 @@ export function RepositoryForm({
           />
         </Field>
 
-        <Field label="Repository">
+        <Field label="Repository Name">
           <input
             required
             value={value.name}
@@ -134,14 +145,14 @@ export function RepositoryForm({
             value={value.externalRepositoryId}
             onChange={(event) => setField('externalRepositoryId', event.target.value)}
             className={inputClassName}
-            placeholder="repo_seed_demo"
+            placeholder="optional provider id"
           />
         </Field>
       </FormSection>
 
       <FormSection
-        icon="link"
-        title="Clone Settings"
+        icon="settings_ethernet"
+        title="Clone And Webhook"
         contentClassName="space-y-6"
       >
         <Field label="Clone URL">
@@ -164,24 +175,14 @@ export function RepositoryForm({
             value={value.webhookSecret}
             onChange={(event) => setField('webhookSecret', event.target.value)}
             className={inputClassName}
-            placeholder="change-me"
+            placeholder="optional secret for signature validation"
           />
         </Field>
-      </FormSection>
 
-      <FormSection
-        icon="webhook"
-        title="Delivery Notes"
-        contentClassName="grid gap-4 md:grid-cols-2"
-      >
-        <DetailPanel
-          label="Webhook Path"
-          value="/api/webhooks/github"
-        />
-        <DetailPanel
-          label="Provider"
-          value="GitHub push events"
-        />
+        <div className="grid gap-4 md:grid-cols-2">
+          <DetailPanel label="Webhook Path" value="/api/webhooks/github" />
+          <DetailPanel label="Events" value="GitHub push events" />
+        </div>
       </FormSection>
 
       {error ? (
@@ -193,7 +194,7 @@ export function RepositoryForm({
           Cancel
         </Button>
         <Button disabled={isSaving || !selectedAppId}>
-          {isSaving ? 'Saving...' : 'Save Changes'}
+          {isSaving ? 'Saving...' : isCreateMode ? 'Connect Repository' : 'Save Changes'}
         </Button>
       </div>
     </form>
@@ -203,12 +204,14 @@ export function RepositoryForm({
 export function RepositoryOverview({
   app,
   repository,
-  latestDeployment,
+  deployments,
 }: {
   app: AppItem
   repository: RepositoryItem | null
-  latestDeployment: DeploymentHistoryItem | null
+  deployments: DeploymentHistoryItem[]
 }) {
+  const latestDeployment = deployments[0] ?? null
+
   return (
     <div className="space-y-8">
       <section className="grid gap-8 xl:grid-cols-[minmax(0,1.6fr)_minmax(320px,1fr)]">
@@ -226,63 +229,68 @@ export function RepositoryOverview({
               label="Connected At"
               value={repository ? formatDate(repository.connectedAtUtc) : 'No data'}
             />
+            <DetailPanel label="Clone URL" value={repository?.cloneUrl ?? 'No data'} />
+            <DetailPanel label="Webhook Secret" value={repository?.hasWebhookSecret ? 'Configured' : 'Pending'} />
           </div>
         </InfoCard>
 
         <div className="space-y-8">
-          <InfoCard title="Webhook">
-            <DetailPanel label="Webhook Path" value={repository?.webhookPath ?? '/api/webhooks/github'} />
-            <DetailPanel
-              label="Secret Status"
-              value={repository?.hasWebhookSecret ? 'Configured' : 'Pending'}
-            />
+          <InfoCard title="App Context">
+            <DetailPanel label="App Status" value={app.status} />
+            <DetailPanel label="Deployments" value={String(app.deploymentCount)} />
+            <DetailPanel label="Domains" value={String(app.domainCount)} />
+            <DetailPanel label="Project Root" value={app.projectRootPath ?? '.'} />
           </InfoCard>
 
-          <InfoCard title="Deploy Branch">
-            <DetailPanel label="Branch" value={repository?.branch ?? 'n/a'} />
-            <DetailPanel
-              label="Latest Commit"
-              value={latestDeployment?.commitSha ?? 'No commit SHA'}
-            />
+          <InfoCard title="Latest Deployment">
+            <DetailPanel label="Status" value={latestDeployment?.status ?? 'No deployments'} />
+            <DetailPanel label="Trigger" value={latestDeployment?.trigger ?? 'n/a'} />
+            <DetailPanel label="Commit" value={latestDeployment?.commitSha ?? 'n/a'} />
+            <DetailPanel label="Stage" value={latestDeployment?.pipelineStage ?? 'n/a'} />
           </InfoCard>
         </div>
       </section>
 
-      <InfoCard title="Recent Deployments">
-        {!latestDeployment ? (
+      <InfoCard title="Deployment History">
+        {deployments.length === 0 ? (
           <EmptyState
             title="Brak deploymentow"
-            description="Po pierwszym deployu tutaj pojawi sie ostatni commit, branch i status."
+            description="Po pierwszym deployu tutaj pojawi sie historia commitow, branchy i statusow wykonania."
           />
         ) : (
           <div className="space-y-4">
-            <div className="flex flex-wrap gap-2">
-              <TableBadge tone={mapDeploymentTone(latestDeployment.status)}>
-                {latestDeployment.status}
-              </TableBadge>
-              <TableBadge tone="muted">{latestDeployment.pipelineStage}</TableBadge>
-              <TableBadge tone="muted">{latestDeployment.trigger}</TableBadge>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2">
-              <DetailPanel label="Commit SHA" value={latestDeployment.commitSha ?? 'Brak'} />
-              <DetailPanel label="Branch" value={latestDeployment.branch} />
-              <DetailPanel label="Created" value={formatDate(latestDeployment.createdAtUtc)} />
-              <DetailPanel
-                label="Finished"
-                value={
-                  latestDeployment.finishedAtUtc
-                    ? formatDate(latestDeployment.finishedAtUtc)
-                    : 'In progress or unavailable'
-                }
-              />
-            </div>
-            {latestDeployment.failureReason ? (
-              <ListMessage
-                title="Ostatni blad deploymentu"
-                description={latestDeployment.failureReason}
-                tone="danger"
-              />
-            ) : null}
+            {deployments.map((deployment) => (
+              <div
+                key={deployment.id}
+                className="rounded-[var(--hp-radius-sm)] border border-[rgba(219,194,176,0.75)] px-5 py-4"
+              >
+                <div className="flex flex-wrap items-center gap-2">
+                  <TableBadge tone={mapDeploymentTone(deployment.status)}>
+                    {deployment.status}
+                  </TableBadge>
+                  <TableBadge tone="muted">{deployment.pipelineStage}</TableBadge>
+                  <TableBadge tone="muted">{deployment.trigger}</TableBadge>
+                </div>
+                <div className="mt-4 grid gap-4 md:grid-cols-2">
+                  <DetailPanel label="Commit SHA" value={deployment.commitSha ?? 'Brak'} />
+                  <DetailPanel label="Branch" value={deployment.branch} />
+                  <DetailPanel label="Created" value={formatDate(deployment.createdAtUtc)} />
+                  <DetailPanel
+                    label="Finished"
+                    value={deployment.finishedAtUtc ? formatDate(deployment.finishedAtUtc) : 'In progress or unavailable'}
+                  />
+                </div>
+                {deployment.failureReason ? (
+                  <div className="mt-4">
+                    <ListMessage
+                      title="Blad deploymentu"
+                      description={deployment.failureReason}
+                      tone="danger"
+                    />
+                  </div>
+                ) : null}
+              </div>
+            ))}
           </div>
         )}
       </InfoCard>

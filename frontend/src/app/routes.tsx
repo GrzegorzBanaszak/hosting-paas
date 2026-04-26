@@ -4,6 +4,8 @@ import { DashboardPage } from '../pages/dashboard/ui/DashboardPage'
 import { AppsPage } from '../pages/apps/ui/AppsPage'
 import { AppDetailsPage } from '../pages/apps/ui/AppDetailsPage'
 import { AppEditPage } from '../pages/apps/ui/AppEditPage'
+import { DeploymentsPage } from '../pages/deployments/ui/DeploymentsPage'
+import { DeploymentDetailsPage } from '../pages/deployments/ui/DeploymentDetailsPage'
 import { RepositoriesPage } from '../pages/repositories/ui/RepositoriesPage'
 import { RepositoryDetailsPage } from '../pages/repositories/ui/RepositoryDetailsPage'
 import { RepositoryEditPage } from '../pages/repositories/ui/RepositoryEditPage'
@@ -65,14 +67,15 @@ export const routes: AppRoute[] = [
     description: 'Historia wdrozen i podglad statusow.',
     icon: 'rocket_launch',
     section: 'primary',
-    element: (
-      <PlaceholderPage
-        eyebrow="Etap 7"
-        title="Deployments"
-        description="Miejsce na liste deploymentow, szczegoly wykonania i reczny trigger wdrozen."
-        highlights={['Historia deploymentow', 'Status commitow', 'Logi i retry']}
-      />
-    ),
+    element: <DeploymentsPage />,
+  },
+  {
+    path: '/deployments/:appId/:deploymentId',
+    label: 'Deployment Details',
+    description: 'Szczegoly pojedynczego deploymentu.',
+    icon: 'rocket_launch',
+    nav: false,
+    element: <DeploymentDetailsPage />,
   },
   {
     path: '/repositories',

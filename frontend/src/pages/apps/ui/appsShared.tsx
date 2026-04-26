@@ -4,6 +4,7 @@ import {
   type AppStatus,
   type SaveAppInput,
 } from '../../../features/apps/model/types'
+import type { DeploymentHistoryItem, RepositoryItem } from '../../../features/repositories/model/types'
 import { ApiError } from '../../../shared/api/http'
 import { Card, CardContent } from '../../../shared/ui/Card'
 
@@ -21,13 +22,21 @@ export const defaultFormValues: SaveAppInput = {
 }
 
 export type RuntimeKind = 'nginx' | 'node'
+export type AppFormMode = 'create' | 'edit'
+export type RuntimePreset =
+  | 'static-site'
+  | 'vite-spa'
+  | 'node-api'
+  | 'aspnet-api'
 
 export function AppForm({
+  mode,
   value,
   error,
   onChange,
   onSubmit,
 }: {
+  mode: AppFormMode
   value: SaveAppInput
   error: string | null
   onChange: (nextValue: SaveAppInput) => void
@@ -41,6 +50,8 @@ export function AppForm({
   }
 
   const runtime = inferRuntime(value)
+  const runtimePreset = inferRuntimePreset(value)
+  const isCreateMode = mode === 'create'
 
   return (
     <form id="app-edit-form" className="space-y-8" onSubmit={onSubmit}>
@@ -85,29 +96,51 @@ export function AppForm({
       </FormSection>
 
       <FormSection
-        icon="source"
-        title="Repo Settings"
-        contentClassName="grid gap-6 md:grid-cols-3"
+        icon="rocket_launch"
+        title={isCreateMode ? 'App Runtime' : 'Runtime Preset'}
+        contentClassName="space-y-6"
       >
-        <Field label="Repository URL" className="md:col-span-2">
-          <div className="relative">
-            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[18px] text-[color:var(--hp-text-muted)]">
-              link
-            </span>
-            <input
-              value={value.projectRootPath}
-              onChange={(event) => setField('projectRootPath', event.target.value)}
-              className="w-full rounded-[var(--hp-radius-sm)] border border-[color:var(--hp-auth-border)] bg-[color:var(--hp-auth-bg)] py-3 pl-12 pr-4 outline-none transition focus:border-[color:var(--hp-accent)]"
-              placeholder="github.com/org/app-repository"
-            />
-          </div>
-        </Field>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {runtimePresetOptions.map((option) => {
+            const selected = option.value === runtimePreset
 
-        <Field label="Deployment Branch">
-          <select value="main" className={inputClassName} disabled>
-            <option value="main">main</option>
-          </select>
-        </Field>
+            return (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => applyRuntimePreset(option.value, value, onChange)}
+                className={`rounded-[var(--hp-radius-sm)] border px-5 py-5 text-left transition ${
+                  selected
+                    ? 'border-[color:var(--hp-accent-strong)] bg-[color:var(--hp-accent-soft)] text-[color:var(--hp-accent-strong)]'
+                    : 'border-[color:var(--hp-auth-border)] bg-white hover:border-[color:var(--hp-accent)]'
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <span className="material-symbols-outlined text-[26px]">{option.icon}</span>
+                  <span className="rounded-full border border-current/15 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em]">
+                    {option.badge}
+                  </span>
+                </div>
+                <div className="mt-5 text-[15px] font-semibold">{option.label}</div>
+                <p className="mt-2 text-[13px] leading-6 text-[color:var(--hp-text-muted)]">
+                  {option.description}
+                </p>
+              </button>
+            )
+          })}
+        </div>
+
+        <div className="rounded-[var(--hp-radius-md)] border border-[color:var(--hp-auth-border)] bg-[rgba(251,249,246,0.85)] px-5 py-4">
+          <div className="font-['Space_Grotesk'] text-[11px] uppercase tracking-[0.14em] text-[color:var(--hp-text-muted)]">
+            Selected Runtime
+          </div>
+          <div className="mt-2 flex flex-wrap items-center gap-3">
+            <div className="text-[18px] font-semibold">{getRuntimePresetLabel(runtimePreset)}</div>
+            <span className="rounded-full border border-[rgba(219,194,176,0.9)] px-3 py-1 text-[12px] text-[color:var(--hp-text-muted)]">
+              Engine: {runtime === 'nginx' ? 'Nginx' : 'Application process'}
+            </span>
+          </div>
+        </div>
       </FormSection>
 
       <FormSection
@@ -115,30 +148,13 @@ export function AppForm({
         title="Runtime Config"
         contentClassName="grid gap-6 md:grid-cols-2"
       >
-        <Field label="Runtime">
-          <div className="grid grid-cols-2 gap-3">
-            {runtimeOptions.map((option) => {
-              const selected = option.value === runtime
-
-              return (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => applyRuntimePreset(option.value, value, onChange)}
-                  className={`flex flex-col items-center gap-2 rounded-[var(--hp-radius-sm)] border px-4 py-4 transition ${
-                    selected
-                      ? 'border-[color:var(--hp-accent-strong)] bg-[color:var(--hp-accent-soft)] text-[color:var(--hp-accent-strong)]'
-                      : 'border-[color:var(--hp-auth-border)] bg-white hover:border-[color:var(--hp-accent)]'
-                  }`}
-                >
-                  <span className="material-symbols-outlined text-[24px]">{option.icon}</span>
-                  <span className="text-[11px] font-bold uppercase tracking-[0.08em]">
-                    {option.label}
-                  </span>
-                </button>
-              )
-            })}
-          </div>
+        <Field label="Project Root Path">
+          <input
+            value={value.projectRootPath}
+            onChange={(event) => setField('projectRootPath', event.target.value)}
+            className={`${inputClassName} font-mono text-[13px]`}
+            placeholder="., frontend, src/Web"
+          />
         </Field>
 
         <Field label="Listen Port">
@@ -151,15 +167,6 @@ export function AppForm({
           />
         </Field>
 
-        <Field label="Build Command">
-          <input
-            value={value.buildCommand}
-            onChange={(event) => setField('buildCommand', event.target.value)}
-            className={`${inputClassName} font-mono text-[13px]`}
-            placeholder="npm run build"
-          />
-        </Field>
-
         <Field label="Start Command">
           <input
             required
@@ -169,56 +176,34 @@ export function AppForm({
             placeholder="npm start"
           />
         </Field>
-      </FormSection>
 
-      <FormSection
-        icon="variables"
-        title="Environment Variables"
-        headerAction={
-          <button
-            type="button"
-            className="inline-flex items-center gap-1 font-['Space_Grotesk'] text-[12px] font-bold uppercase tracking-[0.12em] text-[color:var(--hp-accent-strong)]"
-          >
-            <span className="material-symbols-outlined text-[18px]">add</span>
-            Add Variable
-          </button>
-        }
-        contentClassName="p-0"
-      >
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-left">
-            <thead>
-              <tr className="border-b border-[color:var(--hp-auth-border)] bg-[rgba(255,241,233,0.5)]">
-                <th className="px-6 py-4 font-['Space_Grotesk'] text-[11px] uppercase tracking-[0.12em] text-[color:var(--hp-text-muted)]">
-                  Key
-                </th>
-                <th className="px-6 py-4 font-['Space_Grotesk'] text-[11px] uppercase tracking-[0.12em] text-[color:var(--hp-text-muted)]">
-                  Value
-                </th>
-                <th className="w-16 px-6 py-4" />
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[rgba(233,200,171,0.45)]">
-              {buildEnvPreview(value).map((entry, index) => (
-                <tr key={entry.key} className={index % 2 === 1 ? 'bg-[rgba(251,249,246,0.85)]' : ''}>
-                  <td className="px-6 py-5 font-mono text-[14px]">{entry.key}</td>
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-2 font-mono text-[14px]">
-                      <span className="flex-1 truncate">{entry.value}</span>
-                      {entry.masked ? (
-                        <span className="material-symbols-outlined text-[18px] text-[color:var(--hp-text-muted)]">
-                          visibility
-                        </span>
-                      ) : null}
-                    </div>
-                  </td>
-                  <td className="px-6 py-5 text-right text-[color:var(--hp-text-muted)]">
-                    <span className="material-symbols-outlined text-[18px]">delete</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <Field label="Build Command">
+          <input
+            value={value.buildCommand}
+            onChange={(event) => setField('buildCommand', event.target.value)}
+            className={`${inputClassName} font-mono text-[13px]`}
+            placeholder="npm run build"
+          />
+        </Field>
+
+        <Field label="Health Check Path">
+          <input
+            value={value.healthCheckPath}
+            onChange={(event) => setField('healthCheckPath', event.target.value)}
+            className={`${inputClassName} font-mono text-[13px]`}
+            placeholder="/health"
+          />
+        </Field>
+
+        <div className="rounded-[var(--hp-radius-md)] border border-dashed border-[color:var(--hp-auth-border)] bg-[rgba(255,249,245,0.85)] px-5 py-4 md:col-span-2">
+          <div className="font-['Space_Grotesk'] text-[11px] uppercase tracking-[0.14em] text-[color:var(--hp-text-muted)]">
+            Next Step
+          </div>
+          <p className="mt-2 text-[14px] leading-7 text-[color:var(--hp-text-subtle)]">
+            Repository connection, environment variables and deployments should be configured
+            after the app is created. This screen should only define the app identity and
+            runtime baseline.
+          </p>
         </div>
       </FormSection>
 
@@ -526,76 +511,93 @@ export function inferRuntime(source: Pick<SaveAppInput, 'buildCommand' | 'startC
 }
 
 export function getRuntimeLabel(app: AppItem) {
-  const runtime = inferRuntime({
+  return getRuntimePresetLabel(inferRuntimePreset({
     buildCommand: app.buildCommand ?? '',
     startCommand: app.startCommand,
-  })
-
-  if (runtime === 'nginx') {
-    return 'Nginx'
-  }
-
-  return app.port && app.port >= 4000 ? 'Node.js 20.x' : 'Node.js 18.x'
+    port: app.port ? String(app.port) : '',
+  }))
 }
 
-export function getEnvironmentLabel(app: AppItem) {
-  return app.status === 'Running' || app.status === 'Failed' ? 'Production' : 'Staging'
+export function getAppEndpointLabel(app: AppItem) {
+  return app.primaryHostname?.trim() || 'Primary hostname not configured'
 }
 
-export function getRepositoryLabel(app: AppItem) {
-  if (app.projectRootPath && app.projectRootPath.includes('github.com')) {
-    return app.projectRootPath
+export function getRepositoryLabel(repository: RepositoryItem | null) {
+  if (!repository) {
+    return 'Repository not connected'
   }
 
-  return app.hasRepository
-    ? `github.com/org/${app.slug}`
-    : 'Repository not connected'
+  return `${repository.owner}/${repository.name}`
 }
 
-export function getBranchLabel(app: AppItem) {
-  if (app.status === 'Stopped') {
-    return 'staging'
-  }
-
-  if (app.status === 'Starting') {
-    return 'feat/ui-overhaul'
-  }
-
-  return 'main'
+export function getRepositoryBranchLabel(repository: RepositoryItem | null) {
+  return repository?.branch ?? 'Not configured'
 }
 
-export function buildDeploymentRows(app: AppItem) {
-  return [
-    {
-      id: `dep_${app.slug.slice(0, 4)}_001`,
-      commit: app.buildCommand ? app.buildCommand : `feat: bootstrap ${app.slug}`,
-      status: app.status === 'Failed' ? 'Failed' : 'Succeeded',
-      triggeredBy: app.status === 'Running' ? 'CI/CD Pipeline' : 'system',
-      date: formatRelativeDate(app.updatedAtUtc),
-    },
-    {
-      id: `dep_${app.slug.slice(0, 4)}_002`,
-      commit: `fix: tune ${app.healthCheckPath}`,
-      status: 'Succeeded',
-      triggeredBy: 'jane.doe@infra.io',
-      date: formatRelativeDate(app.createdAtUtc),
-    },
-    {
-      id: `dep_${app.slug.slice(0, 4)}_003`,
-      commit: `docs: update ${app.slug}`,
-      status: app.status === 'Archived' ? 'Failed' : 'Succeeded',
-      triggeredBy: 'CI/CD Pipeline',
-      date: '1d ago',
-    },
-  ]
+export function getProjectRootLabel(app: AppItem) {
+  return app.projectRootPath?.trim() || '.'
+}
+
+export function getDeploymentSummary(deployments: DeploymentHistoryItem[]) {
+  if (deployments.length === 0) {
+    return 'No deployments yet'
+  }
+
+  const latest = deployments[0]
+  const commit = latest.commitSha ? latest.commitSha.slice(0, 7) : 'manual'
+  return `${latest.status} • ${latest.trigger} • ${commit}`
+}
+
+export function getLatestDeployment(deployments: DeploymentHistoryItem[]) {
+  return deployments[0] ?? null
+}
+
+export function formatCommitSha(commitSha: string | null) {
+  return commitSha ? commitSha.slice(0, 7) : 'N/A'
+}
+
+export function formatDeploymentDate(item: DeploymentHistoryItem) {
+  return formatRelativeDate(item.finishedAtUtc ?? item.startedAtUtc ?? item.createdAtUtc)
 }
 
 export const inputClassName =
   'w-full rounded-[var(--hp-radius-sm)] border border-[color:var(--hp-auth-border)] bg-[color:var(--hp-auth-bg)] px-4 py-3 outline-none transition focus:border-[color:var(--hp-accent)]'
 
-const runtimeOptions: Array<{ value: RuntimeKind; label: string; icon: string }> = [
-  { value: 'nginx', label: 'Nginx', icon: 'public' },
-  { value: 'node', label: 'Node.js', icon: 'javascript' },
+const runtimePresetOptions: Array<{
+  value: RuntimePreset
+  label: string
+  icon: string
+  badge: string
+  description: string
+}> = [
+  {
+    value: 'static-site',
+    label: 'Static Site',
+    icon: 'language',
+    badge: 'HTML',
+    description: 'Simple static website served by Nginx with no build step and root health check.',
+  },
+  {
+    value: 'vite-spa',
+    label: 'Vite SPA',
+    icon: 'web',
+    badge: 'Vite',
+    description: 'Frontend app built with Vite and served as a web application on port 3000.',
+  },
+  {
+    value: 'node-api',
+    label: 'Node.js API',
+    icon: 'terminal',
+    badge: 'Node',
+    description: 'Backend service started as a Node.js process with build and runtime commands.',
+  },
+  {
+    value: 'aspnet-api',
+    label: 'ASP.NET API',
+    icon: 'api',
+    badge: '.NET',
+    description: 'ASP.NET Core service using dotnet build and dotnet run on port 8080.',
+  },
 ]
 
 const statusStyles: Record<
@@ -640,47 +642,81 @@ const statusStyles: Record<
 }
 
 function applyRuntimePreset(
-  runtime: RuntimeKind,
+  runtimePreset: RuntimePreset,
   value: SaveAppInput,
   onChange: (nextValue: SaveAppInput) => void,
 ) {
   const currentPort = value.port.trim()
+  const currentRoot = value.projectRootPath.trim()
 
-  if (runtime === 'nginx') {
-    onChange({
-      ...value,
-      buildCommand: 'docker build -t app .',
-      startCommand: 'nginx -g "daemon off;"',
-      port: currentPort || '80',
-    })
-    return
+  switch (runtimePreset) {
+    case 'static-site':
+      onChange({
+        ...value,
+        buildCommand: '',
+        startCommand: 'nginx -g "daemon off;"',
+        port: currentPort || '80',
+        projectRootPath: currentRoot || '.',
+        healthCheckPath: '/',
+      })
+      return
+    case 'vite-spa':
+      onChange({
+        ...value,
+        buildCommand: 'npm run build',
+        startCommand: 'npm run preview -- --host 0.0.0.0 --port 3000',
+        port: currentPort || '3000',
+        projectRootPath: currentRoot || '.',
+        healthCheckPath: '/',
+      })
+      return
+    case 'node-api':
+      onChange({
+        ...value,
+        buildCommand: 'npm run build',
+        startCommand: 'npm run start',
+        port: currentPort || '3000',
+        projectRootPath: currentRoot || '.',
+        healthCheckPath: '/health',
+      })
+      return
+    case 'aspnet-api':
+      onChange({
+        ...value,
+        buildCommand: 'dotnet build',
+        startCommand: 'dotnet run --no-build',
+        port: currentPort || '8080',
+        projectRootPath: currentRoot || '.',
+        healthCheckPath: '/health',
+      })
   }
-
-  onChange({
-    ...value,
-    buildCommand: 'npm run build',
-    startCommand: 'npm start',
-    port: currentPort || '3000',
-  })
 }
 
-function buildEnvPreview(value: SaveAppInput) {
-  return [
-    {
-      key: 'DATABASE_URL',
-      value: '................................................',
-      masked: true,
-    },
-    {
-      key: 'JWT_SECRET',
-      value: '............................',
-      masked: true,
-    },
-    {
-      key: 'NODE_ENV',
-      value:
-        value.status === 'Running' || value.status === 'Failed' ? 'production' : 'staging',
-      masked: false,
-    },
-  ]
+function inferRuntimePreset(source: Pick<SaveAppInput, 'buildCommand' | 'startCommand' | 'port'>): RuntimePreset {
+  const buildCommand = source.buildCommand.toLowerCase()
+  const startCommand = source.startCommand.toLowerCase()
+  const commands = `${buildCommand} ${startCommand}`
+  const port = source.port.trim()
+
+  if (commands.includes('dotnet')) {
+    return 'aspnet-api'
+  }
+
+  if (commands.includes('nginx')) {
+    return 'static-site'
+  }
+
+  if (commands.includes('preview')) {
+    return 'vite-spa'
+  }
+
+  if (commands.includes('npm') || commands.includes('node') || port === '3000') {
+    return 'node-api'
+  }
+
+  return 'node-api'
+}
+
+function getRuntimePresetLabel(runtimePreset: RuntimePreset) {
+  return runtimePresetOptions.find((option) => option.value === runtimePreset)?.label ?? 'Custom'
 }

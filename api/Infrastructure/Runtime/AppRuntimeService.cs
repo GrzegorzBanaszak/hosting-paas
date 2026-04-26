@@ -23,12 +23,22 @@ public sealed class AppRuntimeService(
 
     public async Task<AppRuntimeSnapshot> StartAsync(App app, CancellationToken cancellationToken)
     {
+        if (app.DeploymentKind is DeploymentKind.StaticSite or DeploymentKind.FrontendSpa)
+        {
+            throw new InvalidOperationException($"Runtime start is not supported for deployment kind '{app.DeploymentKind}'.");
+        }
+
+        if (string.IsNullOrWhiteSpace(app.StartCommand))
+        {
+            throw new InvalidOperationException("Start command is not configured for this app.");
+        }
+
         if (processes.TryGetValue(app.Id, out var existing) && !existing.Process.HasExited)
         {
             return await GetStatusAsync(app, cancellationToken);
         }
 
-        var workingDirectory = ResolveWorkingDirectory(app.ProjectRootPath);
+        var workingDirectory = ResolveWorkingDirectory(app.ActiveReleasePath ?? app.ProjectRootPath);
         var startInfo = CreateStartInfo(app.StartCommand, workingDirectory);
         var process = new Process { StartInfo = startInfo, EnableRaisingEvents = true };
 

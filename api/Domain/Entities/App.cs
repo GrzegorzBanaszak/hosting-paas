@@ -22,18 +22,25 @@ public sealed class App : IValidatableObject
 
     public AppStatus Status { get; set; } = AppStatus.Draft;
 
+    public DeploymentKind DeploymentKind { get; set; } = DeploymentKind.StaticSite;
+
     [Range(1, 65535)]
     public int? Port { get; set; }
 
     [StringLength(2000)]
     public string? BuildCommand { get; set; }
 
-    [Required]
-    [StringLength(2000, MinimumLength = 1)]
-    public string StartCommand { get; set; } = string.Empty;
+    [StringLength(2000)]
+    public string? StartCommand { get; set; }
 
     [StringLength(500)]
     public string? ProjectRootPath { get; set; }
+
+    [StringLength(500)]
+    public string? PublishDirectory { get; set; }
+
+    [StringLength(500)]
+    public string? ActiveReleasePath { get; set; }
 
     [StringLength(255)]
     public string HealthCheckPath { get; set; } = "/health";
@@ -59,6 +66,14 @@ public sealed class App : IValidatableObject
             yield return new ValidationResult(
                 "HealthCheckPath must start with '/'.",
                 [nameof(HealthCheckPath)]);
+        }
+
+        if (DeploymentKind is DeploymentKind.BackendApi or DeploymentKind.Fullstack &&
+            string.IsNullOrWhiteSpace(StartCommand))
+        {
+            yield return new ValidationResult(
+                "StartCommand is required for runtime deployment kinds.",
+                [nameof(StartCommand), nameof(DeploymentKind)]);
         }
 
         if (Domains.Count(domain => domain.IsPrimary) > 1)

@@ -20,6 +20,8 @@ public sealed class Deployment : IValidatableObject
 
     public DeploymentTrigger Trigger { get; set; } = DeploymentTrigger.Manual;
 
+    public DeploymentKind DeploymentKind { get; set; } = DeploymentKind.StaticSite;
+
     [Required]
     [StringLength(255, MinimumLength = 1)]
     [RegularExpression(DomainValidationPatterns.BranchName)]
@@ -32,9 +34,17 @@ public sealed class Deployment : IValidatableObject
     [StringLength(200)]
     public string? ArtifactReference { get; set; }
 
+    [StringLength(500)]
+    public string? WorkspacePath { get; set; }
+
+    [StringLength(500)]
+    public string? ReleasePath { get; set; }
+
     public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
 
     public DateTime? StartedAtUtc { get; set; }
+
+    public DateTime? ActivatedAtUtc { get; set; }
 
     public DateTime? FinishedAtUtc { get; set; }
 

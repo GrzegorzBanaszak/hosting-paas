@@ -63,6 +63,11 @@ public sealed class AppsController(AppDbContext dbContext) : ControllerBase
             return ValidationProblem(CreateSingleError(nameof(request.Status), "Unsupported app status."));
         }
 
+        if (!TryParseDeploymentKind(request.DeploymentKind, out var deploymentKind))
+        {
+            return ValidationProblem(CreateSingleError(nameof(request.DeploymentKind), "Unsupported deployment kind."));
+        }
+
         if (await SlugExistsAsync(request.Slug, null, cancellationToken))
         {
             return Conflict(CreateProblemDetails("App slug already exists.", $"Slug '{request.Slug}' is already assigned to another app."));
@@ -76,7 +81,7 @@ public sealed class AppsController(AppDbContext dbContext) : ControllerBase
         }
 
         var app = new App();
-        ApplyRequest(app, request, status!.Value, normalizedHostname);
+        ApplyRequest(app, request, status!.Value, deploymentKind!.Value, normalizedHostname);
 
         if (!TryValidateEntity(app))
         {
@@ -112,6 +117,11 @@ public sealed class AppsController(AppDbContext dbContext) : ControllerBase
             return ValidationProblem(CreateSingleError(nameof(request.Status), "Unsupported app status."));
         }
 
+        if (!TryParseDeploymentKind(request.DeploymentKind, out var deploymentKind))
+        {
+            return ValidationProblem(CreateSingleError(nameof(request.DeploymentKind), "Unsupported deployment kind."));
+        }
+
         if (await SlugExistsAsync(request.Slug, id, cancellationToken))
         {
             return Conflict(CreateProblemDetails("App slug already exists.", $"Slug '{request.Slug}' is already assigned to another app."));
@@ -124,7 +134,7 @@ public sealed class AppsController(AppDbContext dbContext) : ControllerBase
             return Conflict(CreateProblemDetails("Primary hostname already exists.", $"Hostname '{normalizedHostname}' is already assigned to another app."));
         }
 
-        ApplyRequest(app, request, status!.Value, normalizedHostname);
+        ApplyRequest(app, request, status!.Value, deploymentKind!.Value, normalizedHostname);
 
         if (!TryValidateEntity(app))
         {
@@ -173,10 +183,13 @@ public sealed class AppsController(AppDbContext dbContext) : ControllerBase
             app.Slug,
             app.Description,
             app.Status.ToString(),
+            app.DeploymentKind.ToString(),
             app.Port,
             app.BuildCommand,
             app.StartCommand,
             app.ProjectRootPath,
+            app.PublishDirectory,
+            app.ActiveReleasePath,
             app.HealthCheckPath,
             domains.FirstOrDefault(domain => domain.IsPrimary)?.Hostname,
             app.Repository is not null,
@@ -187,16 +200,18 @@ public sealed class AppsController(AppDbContext dbContext) : ControllerBase
             domains);
     }
 
-    private void ApplyRequest(App app, SaveAppRequest request, AppStatus status, string? normalizedHostname)
+    private void ApplyRequest(App app, SaveAppRequest request, AppStatus status, DeploymentKind deploymentKind, string? normalizedHostname)
     {
         app.Name = request.Name.Trim();
         app.Slug = request.Slug.Trim();
         app.Description = NormalizeNullable(request.Description);
         app.Status = status;
+        app.DeploymentKind = deploymentKind;
         app.Port = request.Port;
         app.BuildCommand = NormalizeNullable(request.BuildCommand);
-        app.StartCommand = request.StartCommand.Trim();
+        app.StartCommand = NormalizeNullable(request.StartCommand);
         app.ProjectRootPath = NormalizeNullable(request.ProjectRootPath);
+        app.PublishDirectory = NormalizeNullable(request.PublishDirectory);
         app.HealthCheckPath = request.HealthCheckPath.Trim();
         app.UpdatedAtUtc = DateTime.UtcNow;
 
@@ -281,6 +296,18 @@ public sealed class AppsController(AppDbContext dbContext) : ControllerBase
         }
 
         appStatus = null;
+        return false;
+    }
+
+    private static bool TryParseDeploymentKind(string deploymentKind, out DeploymentKind? parsedDeploymentKind)
+    {
+        if (Enum.TryParse<DeploymentKind>(deploymentKind?.Trim(), ignoreCase: true, out var value))
+        {
+            parsedDeploymentKind = value;
+            return true;
+        }
+
+        parsedDeploymentKind = null;
         return false;
     }
 

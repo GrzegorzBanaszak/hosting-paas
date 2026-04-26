@@ -2,27 +2,20 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { RouterLink } from '../../../app/router'
 import { fetchApps } from '../../../features/apps/api/appsApi'
 import type { AppItem } from '../../../features/apps/model/types'
-import {
-  fetchDeploymentHistory,
-  fetchRepository,
-} from '../../../features/repositories/api/repositoriesApi'
-import type {
-  DeploymentHistoryItem,
-  RepositoryItem,
-} from '../../../features/repositories/model/types'
+import { fetchDeploymentHistory, fetchRepository } from '../../../features/repositories/api/repositoriesApi'
+import type { DeploymentHistoryItem, RepositoryItem } from '../../../features/repositories/model/types'
 import { ApiError } from '../../../shared/api/http'
 import { Button } from '../../../shared/ui/Button'
 import { EmptyState } from '../../../shared/ui/EmptyState'
 import {
   DataTable,
-  formatRelativeDate,
   ListMessage,
   MetricCard,
   SectionTitle,
+  formatCommitSha,
+  formatDeploymentDate,
 } from '../../apps/ui/appsShared'
-import {
-  TableBadge,
-} from './repositoriesShared'
+import { TableBadge } from './repositoriesShared'
 
 type RepositoryStatusFilter = 'all' | 'connected' | 'missing'
 type WebhookFilter = 'all' | 'configured' | 'pending'
@@ -30,11 +23,8 @@ type WebhookFilter = 'all' | 'configured' | 'pending'
 export function RepositoriesPage() {
   const [apps, setApps] = useState<AppItem[]>([])
   const [repositoriesByAppId, setRepositoriesByAppId] = useState<Record<string, RepositoryItem | null>>({})
-  const [latestDeploymentsByAppId, setLatestDeploymentsByAppId] = useState<
-    Record<string, DeploymentHistoryItem | null>
-  >({})
-  const [repositoryStatusFilter, setRepositoryStatusFilter] =
-    useState<RepositoryStatusFilter>('all')
+  const [latestDeploymentsByAppId, setLatestDeploymentsByAppId] = useState<Record<string, DeploymentHistoryItem | null>>({})
+  const [repositoryStatusFilter, setRepositoryStatusFilter] = useState<RepositoryStatusFilter>('all')
   const [webhookFilter, setWebhookFilter] = useState<WebhookFilter>('all')
   const [isLoading, setIsLoading] = useState(true)
   const [listError, setListError] = useState<string | null>(null)
@@ -126,26 +116,24 @@ export function RepositoriesPage() {
 
   const metrics = useMemo(() => {
     const connected = apps.filter((app) => repositoriesByAppId[app.id]).length
-    const configuredWebhooks = apps.filter(
-      (app) => repositoriesByAppId[app.id]?.hasWebhookSecret,
-    ).length
-    const deployReady = apps.filter((app) => latestDeploymentsByAppId[app.id]).length
+    const configuredWebhooks = apps.filter((app) => repositoriesByAppId[app.id]?.hasWebhookSecret).length
+    const pending = Math.max(0, apps.length - connected)
 
     return {
       total: apps.length,
       connected,
       configuredWebhooks,
-      deployReady,
+      pending,
     }
-  }, [apps, latestDeploymentsByAppId, repositoriesByAppId])
+  }, [apps, repositoriesByAppId])
 
   return (
     <div className="space-y-10">
       <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
         <SectionTitle
-          eyebrow="Infrastructure /"
+          eyebrow="Control Plane /"
           title="Repositories"
-          description="Manage GitHub connections, webhook readiness and deployment branches across your application services."
+          description="Repository mappings are attached to apps. This view shows which apps already have source configuration, webhook protection and deploy history."
         />
 
         <div className="flex flex-wrap gap-3">
@@ -154,11 +142,11 @@ export function RepositoriesPage() {
             Refresh
           </Button>
           <RouterLink
-            href="/repositories/create"
+            href="/apps"
             className="inline-flex items-center justify-center rounded-[var(--hp-radius-sm)] border border-transparent bg-[color:var(--hp-accent-strong)] px-6 py-3 font-['Space_Grotesk'] text-[12px] font-bold uppercase tracking-[0.14em] text-white transition hover:bg-[color:var(--hp-accent)]"
           >
-            <span className="material-symbols-outlined mr-2 text-[18px]">add</span>
-            Add Repository
+            <span className="material-symbols-outlined mr-2 text-[18px]">apps</span>
+            Pick App First
           </RouterLink>
         </div>
       </div>
@@ -167,29 +155,29 @@ export function RepositoriesPage() {
         <MetricCard
           label="Tracked Apps"
           value={String(metrics.total)}
-          detail="Services available for Git integration"
+          detail="available app records"
           icon="apps"
         />
         <MetricCard
           label="Connected Repos"
           value={String(metrics.connected)}
-          detail="Apps ready for repository-driven deploys"
+          detail={`${metrics.pending} pending`}
           icon="source"
           accent="text-emerald-600"
         />
         <MetricCard
           label="Webhook Ready"
           value={String(metrics.configuredWebhooks)}
-          detail="Secrets configured for delivery validation"
+          detail="secret configured"
           icon="webhook"
           accent="text-amber-600"
         />
         <MetricCard
-          label="Latest Deploy Data"
-          value={String(metrics.deployReady)}
-          detail="Apps with at least one known deployment"
-          icon="rocket_launch"
-          accent="text-sky-600"
+          label="Missing Repos"
+          value={String(metrics.pending)}
+          detail="need source mapping"
+          icon="link_off"
+          accent="text-[color:var(--hp-text-muted)]"
         />
       </section>
 
@@ -200,7 +188,7 @@ export function RepositoriesPage() {
             onChange={(event) => setRepositoryStatusFilter(event.target.value as RepositoryStatusFilter)}
             className="bg-transparent text-[15px] font-semibold outline-none"
           >
-            <option value="all">All States</option>
+            <option value="all">All states</option>
             <option value="connected">Connected</option>
             <option value="missing">Missing</option>
           </select>
@@ -214,7 +202,7 @@ export function RepositoriesPage() {
             onChange={(event) => setWebhookFilter(event.target.value as WebhookFilter)}
             className="bg-transparent text-[15px] font-semibold outline-none"
           >
-            <option value="all">All Secrets</option>
+            <option value="all">All secrets</option>
             <option value="configured">Configured</option>
             <option value="pending">Pending</option>
           </select>
@@ -236,51 +224,18 @@ export function RepositoriesPage() {
       {isLoading ? (
         <ListMessage
           title="Ladowanie repozytoriow"
-          description="Pobieram aplikacje, podlaczone repozytoria i ostatnie deploymenty."
+          description="Pobieram aplikacje, mapowania repozytoriow i najnowsze deploymenty."
         />
       ) : listError ? (
         <ListMessage title="Nie udalo sie pobrac danych" description={listError} tone="danger" />
       ) : filteredApps.length === 0 ? (
         <EmptyState
           title="Brak wynikow dla wybranych filtrow"
-          description="Zmien filtry albo dodaj polaczenie repozytorium dla jednej z aplikacji."
+          description="Zmien filtry albo podlacz repozytorium do jednej z aplikacji."
         />
       ) : (
         <DataTable
-          columns={[
-            'Application',
-            'Provider & Repo',
-            'Branch',
-            'Webhook',
-            'Latest Deploy',
-            'Actions',
-          ]}
-          footer={
-            <>
-              <span className="font-['Space_Grotesk'] text-[11px] uppercase tracking-[0.12em] text-[color:var(--hp-text-muted)]">
-                Showing 1-{filteredApps.length} of {apps.length} apps
-              </span>
-              <div className="flex items-center gap-2">
-                {['chevron_left', '1', '2', '3', 'chevron_right'].map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    className={`flex h-10 w-10 items-center justify-center border text-[13px] transition ${
-                      item === '1'
-                        ? 'border-[rgba(219,194,176,0.75)] bg-[rgba(255,241,233,0.9)] font-semibold text-[color:var(--hp-accent-strong)]'
-                        : 'border-[rgba(219,194,176,0.75)] bg-white text-[color:var(--hp-text-subtle)] hover:bg-[color:var(--hp-accent-soft)]'
-                    }`}
-                  >
-                    {item.startsWith('chevron') ? (
-                      <span className="material-symbols-outlined text-[18px]">{item}</span>
-                    ) : (
-                      item
-                    )}
-                  </button>
-                ))}
-              </div>
-            </>
-          }
+          columns={['Application', 'Repository', 'Branch', 'Webhook', 'Latest Deploy', 'Actions']}
         >
           {filteredApps.map((app) => {
             const repository = repositoriesByAppId[app.id] ?? null
@@ -302,10 +257,10 @@ export function RepositoriesPage() {
                         <span className="material-symbols-outlined text-[18px] text-[color:var(--hp-text-muted)]">
                           source
                         </span>
-                        {repository.provider}
+                        {repository.owner}/{repository.name}
                       </div>
                       <div className="mt-1 text-[13px] text-[color:var(--hp-text-muted)]">
-                        {repository.owner}/{repository.name}
+                        {repository.provider}
                       </div>
                     </>
                   ) : (
@@ -323,11 +278,25 @@ export function RepositoriesPage() {
                         {repository.branch}
                       </div>
                       <div className="mt-1 text-[13px] text-[color:var(--hp-text-muted)]">
-                        Connected {formatRelativeDate(repository.connectedAtUtc)}
+                        Connected {formatDeploymentDate({
+                          id: repository.id,
+                          appId: repository.appId,
+                          repositoryId: repository.id,
+                          status: '',
+                          trigger: '',
+                          pipelineStage: '',
+                          branch: repository.branch,
+                          commitSha: null,
+                          artifactReference: null,
+                          failureReason: null,
+                          createdAtUtc: repository.connectedAtUtc,
+                          startedAtUtc: null,
+                          finishedAtUtc: null,
+                        })}
                       </div>
                     </>
                   ) : (
-                    <span className="text-[14px] text-[color:var(--hp-text-muted)]">n/a</span>
+                    <span className="text-[14px] text-[color:var(--hp-text-muted)]">Not configured</span>
                   )}
                 </td>
 
@@ -342,9 +311,9 @@ export function RepositoriesPage() {
                 <td className="px-8 py-6">
                   {latestDeployment ? (
                     <>
-                      <div className="text-[15px]">{formatRelativeDate(latestDeployment.createdAtUtc)}</div>
-                      <div className="mt-1 text-[13px] text-[color:var(--hp-text-muted)]">
-                        {latestDeployment.commitSha ?? 'No commit SHA'}
+                      <div className="text-[15px]">{latestDeployment.status}</div>
+                      <div className="mt-1 font-mono text-[13px] text-[color:var(--hp-text-muted)]">
+                        {formatCommitSha(latestDeployment.commitSha)} • {formatDeploymentDate(latestDeployment)}
                       </div>
                     </>
                   ) : (
@@ -356,9 +325,9 @@ export function RepositoriesPage() {
                   <div className="flex items-center justify-end gap-1 opacity-0 transition group-hover:opacity-100">
                     <ActionLink href={`/repositories/${app.id}`} icon="visibility" label="View repository" />
                     <ActionLink
-                      href={repository ? `/repositories/${app.id}/edit` : '/repositories/create'}
-                      icon="edit"
-                      label="Edit repository"
+                      href={`/repositories/${app.id}/edit`}
+                      icon={repository ? 'edit' : 'add'}
+                      label={repository ? 'Edit repository' : 'Add repository'}
                     />
                   </div>
                 </td>
@@ -371,30 +340,23 @@ export function RepositoriesPage() {
       <section className="grid gap-8 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <div className="border-l-2 border-[color:var(--hp-accent-strong)] pl-6">
           <div className="font-['Space_Grotesk'] text-[12px] uppercase tracking-[0.14em] text-[color:var(--hp-accent-strong)]">
-            Technical Guidance
+            Data Model
           </div>
           <p className="mt-4 max-w-2xl text-[18px] leading-8 text-[color:var(--hp-text-subtle)]">
-            Keep branch ownership strict. A single deploy branch should map to one application only,
-            and webhook secrets should be rotated whenever repository access changes.
+            Repository is a child resource of an app. The operational goal of this screen is to show which apps already have a valid source mapping and which still need configuration.
           </p>
         </div>
 
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-end">
-          <StatusMini
-            title="Webhook Health"
-            value={`${metrics.configuredWebhooks}/${Math.max(metrics.total, 1)}`}
-            accent="text-emerald-500"
-          />
+          <StatusMini title="Webhook Health" value={`${metrics.configuredWebhooks}/${Math.max(metrics.connected, 1)}`} accent="text-emerald-500" />
           <div className="hidden h-12 w-px bg-[rgba(219,194,176,0.75)] md:block" />
           <div>
             <div className="font-['Space_Grotesk'] text-[11px] uppercase tracking-[0.12em] text-[color:var(--hp-text-muted)]">
-              Branch Coverage
+              Repository Coverage
             </div>
             <div className="mt-3 flex items-center gap-2">
               <span className="text-[38px] font-bold tracking-[-0.04em]">{metrics.connected}</span>
-              <span className="material-symbols-outlined text-[18px] text-emerald-500">
-                source_environment
-              </span>
+              <span className="text-[13px] text-[color:var(--hp-text-muted)]">apps mapped</span>
             </div>
           </div>
         </div>

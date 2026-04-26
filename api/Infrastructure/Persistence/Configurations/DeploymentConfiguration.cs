@@ -14,12 +14,16 @@ public sealed class DeploymentConfiguration : IEntityTypeConfiguration<Deploymen
 
         builder.Property(deployment => deployment.Status).HasConversion<string>().HasMaxLength(32);
         builder.Property(deployment => deployment.Trigger).HasConversion<string>().HasMaxLength(32);
+        builder.Property(deployment => deployment.DeploymentKind).HasConversion<string>().HasMaxLength(32);
         builder.Property(deployment => deployment.Branch).HasMaxLength(255);
         builder.Property(deployment => deployment.CommitSha).HasMaxLength(40);
         builder.Property(deployment => deployment.ArtifactReference).HasMaxLength(200);
+        builder.Property(deployment => deployment.WorkspacePath).HasMaxLength(500);
+        builder.Property(deployment => deployment.ReleasePath).HasMaxLength(500);
         builder.Property(deployment => deployment.FailureReason).HasMaxLength(2000);
         builder.Property(deployment => deployment.CreatedAtUtc).HasColumnType("timestamp with time zone");
         builder.Property(deployment => deployment.StartedAtUtc).HasColumnType("timestamp with time zone");
+        builder.Property(deployment => deployment.ActivatedAtUtc).HasColumnType("timestamp with time zone");
         builder.Property(deployment => deployment.FinishedAtUtc).HasColumnType("timestamp with time zone");
 
         builder.HasIndex(deployment => new { deployment.AppId, deployment.CreatedAtUtc });

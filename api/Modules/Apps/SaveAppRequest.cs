@@ -21,18 +21,24 @@ public sealed class SaveAppRequest
     [StringLength(32, MinimumLength = 3)]
     public string Status { get; set; } = "Draft";
 
+    [Required]
+    [StringLength(32, MinimumLength = 3)]
+    public string DeploymentKind { get; set; } = "StaticSite";
+
     [Range(1, 65535)]
     public int? Port { get; set; }
 
     [StringLength(2000)]
     public string? BuildCommand { get; set; }
 
-    [Required]
-    [StringLength(2000, MinimumLength = 1)]
-    public string StartCommand { get; set; } = string.Empty;
+    [StringLength(2000)]
+    public string? StartCommand { get; set; }
 
     [StringLength(500)]
     public string? ProjectRootPath { get; set; }
+
+    [StringLength(500)]
+    public string? PublishDirectory { get; set; }
 
     [Required]
     [StringLength(255, MinimumLength = 1)]

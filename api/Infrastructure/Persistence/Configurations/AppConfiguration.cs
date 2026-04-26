@@ -15,9 +15,12 @@ public sealed class AppConfiguration : IEntityTypeConfiguration<App>
         builder.Property(app => app.Name).HasMaxLength(100);
         builder.Property(app => app.Slug).HasMaxLength(100);
         builder.Property(app => app.Description).HasMaxLength(500);
+        builder.Property(app => app.DeploymentKind).HasConversion<string>().HasMaxLength(32);
         builder.Property(app => app.BuildCommand).HasMaxLength(2000);
         builder.Property(app => app.StartCommand).HasMaxLength(2000);
         builder.Property(app => app.ProjectRootPath).HasMaxLength(500);
+        builder.Property(app => app.PublishDirectory).HasMaxLength(500);
+        builder.Property(app => app.ActiveReleasePath).HasMaxLength(500);
         builder.Property(app => app.HealthCheckPath).HasMaxLength(255);
 
         builder.Property(app => app.Status).HasConversion<string>().HasMaxLength(32);

@@ -87,13 +87,13 @@ Ten dokument opisuje osobny plan dla panelu administracyjnego frontendowego. Cel
 
 ## Etap 7 - deploymenty
 
-- [ ] dodac liste deploymentow dla aplikacji
-- [ ] dodac widok szczegolow deploymentu
-- [ ] pokazac status deploymentu, trigger i commit SHA
-- [ ] dodac reczny trigger deployu
-- [ ] dodac odswiezanie statusu deploymentu
-- [ ] dodac podstawowy podglad logow deploymentu
-- [ ] przygotowac miejsce pod retry i redeploy
+- [x] dodac liste deploymentow dla aplikacji
+- [x] dodac widok szczegolow deploymentu
+- [x] pokazac status deploymentu, trigger i commit SHA
+- [x] dodac reczny trigger deployu
+- [x] dodac odswiezanie statusu deploymentu
+- [x] dodac podstawowy podglad logow deploymentu
+- [x] przygotowac miejsce pod retry i redeploy
 
 ---
 

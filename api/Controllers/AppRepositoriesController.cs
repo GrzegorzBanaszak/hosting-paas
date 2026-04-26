@@ -6,6 +6,7 @@ using Api.Infrastructure.Deployments;
 using Api.Infrastructure.Persistence;
 using Api.Modules.Deployments;
 using Api.Modules.Repositories;
+using Api.Modules.Runtime;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -158,6 +159,62 @@ public sealed class AppRepositoriesController(AppDbContext dbContext, IDeploymen
             .ToArray());
     }
 
+    [HttpGet("/api/apps/{appId:guid}/deployments/{deploymentId:guid}")]
+    [ProducesResponseType<DeploymentDetailsResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<DeploymentDetailsResponse>> GetDeploymentDetails(Guid appId, Guid deploymentId, CancellationToken cancellationToken)
+    {
+        var deployment = await dbContext.Deployments
+            .AsNoTracking()
+            .Where(item => item.AppId == appId && item.Id == deploymentId)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (deployment is null)
+        {
+            return NotFound();
+        }
+
+        var latestLogSource = await dbContext.LogEntries
+            .AsNoTracking()
+            .Where(item => item.DeploymentId == deploymentId)
+            .OrderByDescending(item => item.TimestampUtc)
+            .ThenByDescending(item => item.Id)
+            .Select(item => item.Source)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return Ok(MapDetailsResponse(deployment, latestLogSource));
+    }
+
+    [HttpGet("/api/apps/{appId:guid}/deployments/{deploymentId:guid}/logs")]
+    [ProducesResponseType<IReadOnlyCollection<AppLogEntryResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IReadOnlyCollection<AppLogEntryResponse>>> GetDeploymentLogs(
+        Guid appId,
+        Guid deploymentId,
+        [FromQuery] int? limit,
+        CancellationToken cancellationToken)
+    {
+        var deploymentExists = await dbContext.Deployments
+            .AsNoTracking()
+            .AnyAsync(item => item.AppId == appId && item.Id == deploymentId, cancellationToken);
+
+        if (!deploymentExists)
+        {
+            return NotFound();
+        }
+
+        var effectiveLimit = Math.Clamp(limit ?? 200, 1, 1000);
+        var logs = await dbContext.LogEntries
+            .AsNoTracking()
+            .Where(item => item.AppId == appId && item.DeploymentId == deploymentId)
+            .OrderByDescending(item => item.TimestampUtc)
+            .ThenByDescending(item => item.Id)
+            .Take(effectiveLimit)
+            .ToListAsync(cancellationToken);
+
+        return Ok(logs.Select(MapLogResponse).ToArray());
+    }
+
     [HttpPost("/api/apps/{appId:guid}/deployments/redeploy")]
     [ProducesResponseType<DeploymentQueueResponse>(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -244,13 +301,39 @@ public sealed class AppRepositoriesController(AppDbContext dbContext, IDeploymen
             deployment.RepositoryId,
             deployment.Status.ToString(),
             deployment.Trigger.ToString(),
+            deployment.DeploymentKind.ToString(),
             ResolvePipelineStage(deployment, latestLogSource).ToString(),
             deployment.Branch,
             deployment.CommitSha,
             deployment.ArtifactReference,
+            deployment.WorkspacePath,
+            deployment.ReleasePath,
             deployment.FailureReason,
             deployment.CreatedAtUtc,
             deployment.StartedAtUtc,
+            deployment.ActivatedAtUtc,
+            deployment.FinishedAtUtc);
+    }
+
+    private static DeploymentDetailsResponse MapDetailsResponse(Deployment deployment, string? latestLogSource)
+    {
+        return new DeploymentDetailsResponse(
+            deployment.Id,
+            deployment.AppId,
+            deployment.RepositoryId,
+            deployment.Status.ToString(),
+            deployment.Trigger.ToString(),
+            deployment.DeploymentKind.ToString(),
+            ResolvePipelineStage(deployment, latestLogSource).ToString(),
+            deployment.Branch,
+            deployment.CommitSha,
+            deployment.ArtifactReference,
+            deployment.WorkspacePath,
+            deployment.ReleasePath,
+            deployment.FailureReason,
+            deployment.CreatedAtUtc,
+            deployment.StartedAtUtc,
+            deployment.ActivatedAtUtc,
             deployment.FinishedAtUtc);
     }
 
@@ -339,20 +422,40 @@ public sealed class AppRepositoriesController(AppDbContext dbContext, IDeploymen
             DeploymentStatus.Succeeded => DeploymentPipelineStage.Completed,
             DeploymentStatus.Failed => latestLogSource switch
             {
+                DeploymentLogSources.Verification => DeploymentPipelineStage.Verification,
                 DeploymentLogSources.Restart => DeploymentPipelineStage.Restart,
+                DeploymentLogSources.Activation => DeploymentPipelineStage.Activation,
                 DeploymentLogSources.Publish => DeploymentPipelineStage.Publish,
                 DeploymentLogSources.Build => DeploymentPipelineStage.Build,
+                DeploymentLogSources.ProjectDetection => DeploymentPipelineStage.ProjectDetection,
+                DeploymentLogSources.SourceAcquisition => DeploymentPipelineStage.SourceAcquisition,
                 _ => DeploymentPipelineStage.Failed
             },
             DeploymentStatus.Cancelled => DeploymentPipelineStage.Cancelled,
             DeploymentStatus.Running => latestLogSource switch
             {
+                DeploymentLogSources.Verification => DeploymentPipelineStage.Verification,
                 DeploymentLogSources.Restart => DeploymentPipelineStage.Restart,
+                DeploymentLogSources.Activation => DeploymentPipelineStage.Activation,
                 DeploymentLogSources.Publish => DeploymentPipelineStage.Publish,
                 DeploymentLogSources.Build => DeploymentPipelineStage.Build,
-                _ => DeploymentPipelineStage.Build
+                DeploymentLogSources.ProjectDetection => DeploymentPipelineStage.ProjectDetection,
+                DeploymentLogSources.SourceAcquisition => DeploymentPipelineStage.SourceAcquisition,
+                _ => DeploymentPipelineStage.SourceAcquisition
             },
             _ => DeploymentPipelineStage.Queued
         };
+    }
+
+    private static AppLogEntryResponse MapLogResponse(LogEntry entry)
+    {
+        return new AppLogEntryResponse(
+            entry.Id,
+            entry.AppId,
+            entry.DeploymentId,
+            entry.Level.ToString(),
+            entry.Source,
+            entry.Message,
+            entry.TimestampUtc);
     }
 }

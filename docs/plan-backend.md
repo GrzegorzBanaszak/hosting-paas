@@ -100,7 +100,25 @@ Ten dokument opisuje osobny plan dla API backendowego. Celem jest zbudowanie pro
 - [x] dodac etap restartu uslugi
 - [x] dodac statusy pipeline
 - [x] dodac obsluge bledow i retry
-- [x] dodac historię deploymentow
+- [x] dodac historie deploymentow
+- [x] dodac pobieranie kodu z repozytorium do izolowanego workspace
+- [x] dodac checkout konkretnego commita SHA przed uruchomieniem pipeline
+- [x] dodac rozroznienie typu deploymentu: `StaticSite`, `FrontendSpa`, `BackendApi`, `Fullstack`
+- [x] dodac auto-detekcje typu projektu na podstawie struktury repozytorium
+- [x] dodac osobne etapy pipeline: `SourceAcquisition`, `ProjectDetection`, `Build`, `Publish`, `Activation`, `Verification`
+- [x] dodac konfiguracje katalogow `workspaces`, `releases` i `current`
+- [x] dodac zapis metadanych workspace i release w rekordzie deploymentu
+- [x] dodac konfiguracje `PublishDirectory` albo katalogu output per typ aplikacji
+- [x] dodac reguly publikacji dla `StaticSite` bez kroku runtime/start
+- [x] dodac reguly publikacji dla `FrontendSpa` z kopiowaniem `dist/` albo `build/`
+- [x] dodac publikacje statycznych plikow do katalogu release
+- [x] dodac aktywacje release przez przelaczenie katalogu `current`
+- [x] dodac oznaczenie aktywnego release per aplikacja
+- [x] dodac rollback do poprzedniego release przy nieudanej aktywacji lub weryfikacji
+- [x] dodac podstawowy smoke test po deployu
+- [x] dodac walidacje obecnosci pliku startowego po publish, np. `index.html` dla `StaticSite`
+- [x] dodac endpoint szczegolow pojedynczego deploymentu
+- [x] dodac endpoint logow dla konkretnego deploymentu
 
 ---
 
@@ -113,6 +131,10 @@ Ten dokument opisuje osobny plan dla API backendowego. Celem jest zbudowanie pro
 - [x] dodac podglad ostatnich logow
 - [x] dodac pobieranie logow po zakresie czasu
 - [x] dodac prosty monitoring statusu kontenera
+- [ ] dodac rozdzielenie logow runtime od logow deploymentu na poziomie endpointow
+- [ ] dodac blokade operacji start / restart dla aplikacji typu `StaticSite`
+- [ ] dodac status gotowosci release przed uruchomieniem runtime
+- [ ] dodac endpoint ostatniego znanego stanu runtime per aplikacja
 
 ---
 
@@ -133,6 +155,10 @@ Ten dokument opisuje osobny plan dla API backendowego. Celem jest zbudowanie pro
 - [ ] dodac walidacje konfliktow domen
 - [ ] dodac status konfiguracji routingu
 - [ ] przygotowac backend pod reverse proxy
+- [ ] dodac generowanie konfiguracji reverse proxy dla aktywnego release
+- [ ] dodac mapowanie domeny na katalog `current` dla aplikacji statycznych
+- [ ] dodac obsluge primary domain i domen dodatkowych przy aktywacji release
+- [ ] dodac walidacje zgodnosci domen z typem aplikacji i trybem deploymentu
 
 ---
 
@@ -143,6 +169,10 @@ Ten dokument opisuje osobny plan dla API backendowego. Celem jest zbudowanie pro
 - [ ] dodac logi dla deploymentow
 - [ ] dodac audyt najwazniejszych akcji
 - [ ] dodac prosty endpoint diagnostyczny
+- [ ] dodac logowanie etapow pipeline: `SourceAcquisition`, `ProjectDetection`, `Build`, `Publish`, `Activation`, `Verification`
+- [ ] dodac rozroznienie logow webhooka, deployu i runtime przez stale `source`
+- [ ] dodac metadane commita, brancha i app id do logow deploymentowych
+- [ ] dodac endpoint diagnostyczny dla kolejek i aktywnych workerow
 
 ---
 
@@ -164,6 +194,11 @@ Ten dokument opisuje osobny plan dla API backendowego. Celem jest zbudowanie pro
 - [ ] dodac timeouty dla operacji zewnetrznych
 - [ ] dodac retry dla wybranych operacji
 - [ ] dodac bezpieczne przechowywanie sekretow
+- [ ] dodac walidacje bezpiecznych sciezek workspace / release / current
+- [ ] dodac ograniczenia dla komend build i start uruchamianych przez worker
+- [ ] dodac atomowe przelaczanie release bez pozostawiania niepelnego stanu
+- [ ] dodac cleanup starych workspace i release po polityce retencji
+- [ ] dodac ochrone przed wielokrotnym queue tego samego deploymentu dla tego samego commita
 
 ---
 
@@ -192,3 +227,5 @@ Backend v0 powinien umiec:
 - pokazywac status deploymentu
 - zwracac logi i healthcheck
 - restartowac aplikacje
+- publikowac statyczna aplikacje do aktywnego release
+- przechowywac historie deploymentow wraz z commit SHA i etapem pipeline

@@ -13,6 +13,7 @@ public static class DeploymentFactory
         {
             AppId = app.Id,
             RepositoryId = repository.Id,
+            DeploymentKind = app.DeploymentKind,
             Branch = branch,
             CommitSha = commitSha,
             Trigger = trigger,

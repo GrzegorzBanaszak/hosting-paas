@@ -1,5 +1,6 @@
 using Api.Configuration;
 using Api.Domain.Entities;
+using Api.Domain.Enums;
 using Api.Infrastructure.Auth;
 using Api.Infrastructure.Persistence;
 using Api.Infrastructure.Runtime;
@@ -47,6 +48,14 @@ public sealed class AppRuntimeController(
             return NotFound();
         }
 
+        if (app.DeploymentKind is DeploymentKind.StaticSite or DeploymentKind.FrontendSpa)
+        {
+            return ValidationProblem(new ValidationProblemDetails(new Dictionary<string, string[]>
+            {
+                ["deploymentKind"] = [$"Runtime start is not supported for deployment kind '{app.DeploymentKind}'."]
+            }));
+        }
+
         var snapshot = await runtimeService.StartAsync(app, cancellationToken);
         return Ok(MapStatus(snapshot));
     }
@@ -75,6 +84,14 @@ public sealed class AppRuntimeController(
         if (app is null)
         {
             return NotFound();
+        }
+
+        if (app.DeploymentKind is DeploymentKind.StaticSite or DeploymentKind.FrontendSpa)
+        {
+            return ValidationProblem(new ValidationProblemDetails(new Dictionary<string, string[]>
+            {
+                ["deploymentKind"] = [$"Runtime restart is not supported for deployment kind '{app.DeploymentKind}'."]
+            }));
         }
 
         var snapshot = await runtimeService.RestartAsync(app, cancellationToken);

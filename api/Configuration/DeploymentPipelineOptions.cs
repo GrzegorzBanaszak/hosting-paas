@@ -22,5 +22,20 @@ public sealed class DeploymentPipelineOptions
     [StringLength(260, MinimumLength = 1)]
     public string ArtifactRootPath { get; set; } = "artifacts";
 
+    [Required]
+    [StringLength(260, MinimumLength = 1)]
+    public string WorkspaceRootPath { get; set; } = "workspaces";
+
+    [Required]
+    [StringLength(260, MinimumLength = 1)]
+    public string ReleaseRootPath { get; set; } = "releases";
+
+    [Required]
+    [StringLength(260, MinimumLength = 1)]
+    public string CurrentRootPath { get; set; } = "current";
+
+    [Range(1, 300)]
+    public int VerificationTimeoutSeconds { get; set; } = 30;
+
     public bool ExecuteStartCommandOnRestart { get; set; }
 }

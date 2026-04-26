@@ -27,7 +27,7 @@ export function RepositoryDetailsPage() {
   const appId = useMemo(() => decodeURIComponent(currentPath.split('/')[2] ?? ''), [currentPath])
   const [app, setApp] = useState<AppItem | null>(null)
   const [repository, setRepository] = useState<RepositoryItem | null>(null)
-  const [latestDeployment, setLatestDeployment] = useState<DeploymentHistoryItem | null>(null)
+  const [deployments, setDeployments] = useState<DeploymentHistoryItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -65,7 +65,7 @@ export function RepositoryDetailsPage() {
 
         setApp(appResponse)
         setRepository(repositoryResponse)
-        setLatestDeployment(deployments[0] ?? null)
+        setDeployments(deployments)
       } catch (loadError) {
         if (!isActive) {
           return
@@ -164,7 +164,7 @@ export function RepositoryDetailsPage() {
               Back
             </RouterLink>
             <RouterLink
-              href={repository ? `/repositories/${app.id}/edit` : '/repositories/create'}
+              href={`/repositories/${app.id}/edit`}
               className="inline-flex items-center justify-center rounded-[var(--hp-radius-sm)] border border-transparent bg-[color:var(--hp-accent-strong)] px-6 py-3 font-['Space_Grotesk'] text-[12px] font-bold uppercase tracking-[0.14em] text-white transition hover:bg-[color:var(--hp-accent)]"
             >
               <span className="material-symbols-outlined mr-2 text-[18px]">edit</span>
@@ -183,7 +183,7 @@ export function RepositoryDetailsPage() {
         }
       />
 
-      <RepositoryOverview app={app} repository={repository} latestDeployment={latestDeployment} />
+      <RepositoryOverview app={app} repository={repository} deployments={deployments} />
     </div>
   )
 }

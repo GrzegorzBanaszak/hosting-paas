@@ -30,6 +30,14 @@ export function RepositoryEditPage() {
   const [error, setError] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
 
+  const availableAppsForCreate = useMemo(
+    () =>
+      isCreateMode
+        ? apps.filter((item) => item.hasRepository === false || item.id === selectedAppId)
+        : apps,
+    [apps, isCreateMode, selectedAppId],
+  )
+
   const selectedApp = useMemo(
     () => apps.find((item) => item.id === (isCreateMode ? selectedAppId : appId)) ?? null,
     [appId, apps, isCreateMode, selectedAppId],
@@ -52,7 +60,8 @@ export function RepositoryEditPage() {
         setApps(appItems)
 
         if (isCreateMode) {
-          setSelectedAppId((current) => current || appItems[0]?.id || '')
+          const appsWithoutRepository = appItems.filter((item) => item.hasRepository === false)
+          setSelectedAppId((current) => current || appsWithoutRepository[0]?.id || '')
           setRepository(null)
           setFormValues(defaultRepositoryFormValues)
           setIsLoading(false)
@@ -151,6 +160,15 @@ export function RepositoryEditPage() {
     )
   }
 
+  if (isCreateMode && availableAppsForCreate.length === 0) {
+    return (
+      <EmptyState
+        title="Wszystkie aplikacje maja juz repozytorium"
+        description="Aby zmienic mapowanie repozytorium, przejdz do szczegolow wybranej aplikacji albo uzyj ekranu edycji repozytorium."
+      />
+    )
+  }
+
   return (
     <div className="space-y-8">
       <div className="sticky top-[-1.5rem] z-10 -mx-5 -mt-6 flex flex-col gap-4 border-b border-[color:var(--hp-auth-border)] bg-[rgba(255,241,233,0.96)] px-5 py-5 backdrop-blur-sm md:flex-row md:items-center md:justify-between lg:top-[-2rem] lg:-mx-10 lg:-mt-8 lg:px-10">
@@ -186,7 +204,7 @@ export function RepositoryEditPage() {
       <div className="mx-auto max-w-[1200px]">
         <RepositoryForm
           selectedApp={selectedApp}
-          availableApps={apps}
+          availableApps={availableAppsForCreate}
           selectedAppId={isCreateMode ? selectedAppId : appId}
           value={formValues}
           error={error}

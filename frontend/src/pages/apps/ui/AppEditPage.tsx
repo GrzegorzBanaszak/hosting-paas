@@ -166,6 +166,7 @@ export function AppEditPage() {
 
       <div className="mx-auto max-w-[1200px]">
         <AppForm
+          mode={isCreateMode ? 'create' : 'edit'}
           value={formValues}
           error={error}
           onChange={setFormValues}
